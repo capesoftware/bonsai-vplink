@@ -33,6 +33,18 @@ The structure of the sim.zip file is fixed.  The vplink_interface.json needs to 
 Any VP Link .tag files or .icf files go in a ./cfg/ directory under the root.  Any .tag files present in the ./cfg/ directory
 will be loaded into the VP Link simulator.  The .icf files are made available for the user to load at the start of an episode.
 
+```
+sim.zip
+├── vplink_interface.json
+├── cfg/
+|   ├── ... TAG files ...
+|   └── ... ICF files ...
+├── sces/
+|   └── ... Scenario files ...
+├── data/
+|   └──... Other Data (not used yet) ...
+```
+
 ## Usage: Running a local simulator
 
 Use the VPLinkSim_Bonsai3.exe program to connect your simulation to the Bonsai web site.  This will show up as an unmanaged
