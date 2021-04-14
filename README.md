@@ -14,12 +14,12 @@ VP Link Users:
 * Use the Bonsai Tag Integration page from the Bonsai.rev file to add VP Link tags to your SimState and SimAction structures.
 * You can connect your local VP Link simulation to Bonsai to experiment with training a brain.
 * Once you have your local VP Link simulation working with Bonsai, use the Bonsai Loadable page from the Bonsai.rev file to create your VP Link loadable on your local machine.
-* Upload the loadable to the Bonsai web site and train a brain at scale.
+* Add a Simulator to your workspace by uploading the loadable to the Bonsai web site and train a brain at scale.
 
 
 Other Users:
 * Browse the documentation and use one of the existing sample simulations to explore how to train a brain with the Inkling language.
-* Upload the loadable to the Bonsai web site and train a brain at scale.
+* Add a Simulator to your workspace by uploading the loadable to the Bonsai web site and train a brain at scale.
 
 ## Concepts: What is a VP Link loadable?
 
@@ -47,12 +47,13 @@ sim.zip
 
 ## Usage: Running a local simulator
 
-Use the VPLinkSim_Bonsai3.exe program to connect your simulation to the Bonsai web site.  This will show up as an unmanaged
+If you have VP Link running on your local machine, you can use the VPLinkSim_Bonsai3.exe program to connect your simulation to the Bonsai web site.  This will show up as an unmanaged
 sim with the name, VPLink3b.  The advantages of running the simulator locally are:
 * You can monitor what is happening with your VP Link interface.
 * You can make changes to the simulator very quickly as needed to support the simulation.  This includes adjusting ranges, adding
 new tags, etc.
-* You can save new initial condition files (.icf) to support your needed starting states for the simulation.
+* You can save new initial condition files (.icf) to support your needed starting states for various lessons as you train the brain with the simulation.
+* You can change the tags that are included in the SimState and SimAction structures.
 
 > Assume that a user has already created a simulation using {SimPlatform}. Feel free to include a link to {SimPlatform}'s documentation if you think it would be helpful, but it isn't necessary to document how to use {SimPlatform} itself.
 >
@@ -64,17 +65,17 @@ new tags, etc.
 >
 > Optional: Does the connector for {SimPlatform} allow an integrated way of launching a local simulator, debugging a local simulator, or visualizing a local simulator as it executes via a user interface inside {SimPlatform}? Such capabilities can be described here.
 
-## Usage: Scaling your simulator
+## Usage: Adding a VP Link simulator to your workspace
 
-> This section should list steps for running multiple simulator instances to scale Bonsai training.
->
-> Typically this is done by adding a simulator container to your Bonsai workspace. In that case, this section will include:
-> * Command line arguments for building a container with the {SimPlatform} connector and the user's simulation.
-> * A link to the documentation topic [Add a training simulator to your Bonsai workspace](https://docs.microsoft.com/en-us/bonsai/guides/add-simulator?tabs=add-cli%2Ctrain-inkling&pivots=sim-platform-other) for information about how to upload the container, add it to Bonsai, and scale the simulator.
->
-> It is less desirable, but if it is the case that {SimPlatform} cannot be run inside a scalable container then an alternate means of scaling simulator instances such as [bonsai-batch](https://github.com/microsoft/bonsai-batch) can be documented here.
->
-> Optional: Does the connector for {SimPlatform} allow an integrated way of uploading a simulator to the Bonsai service or scaling the simulator instances for training via a user interface inside {SimPlatform}? Such capabilities can be described here.
+You can easily add a VP Link simulator to your Bonsai workspace using the built-in VP Link simulator.
+
+* From the bonsai web page, click the [Add Simultor button](docs/BonsaiAddSim.png) in the left panel.
+* Choose the VP Link simulator.  You will see a window where you can upload your VP Link loadable. ![](docs/AddSimUploadModel.png)
+* Upload your VP Link loadable by dragging it from your local machine to the window.
+* Give the simulator a name and click the "Create Simulator" button.
+In a minute or two you will see the simulator in your list of simulators on the bonsai web page.
+* Launch the simulator to automatically generate the Inkling code for the SimState, SimAction and SimConfig corresponding to
+the model you have uploaded.
 
 ## Trademarks
 
