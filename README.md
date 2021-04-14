@@ -76,10 +76,11 @@ create one from your running VP Link model.
 * Choose the VP Link simulator.  You will see a window where you can upload your VP Link loadable. ![](docs/AddSimUploadModel.png)
 * Upload your VP Link loadable by dragging it from your local machine to the window.  Give the simulator a name and click the "Create Simulator" button.
 You will see the bonsai platform creating your simulator image.  In a minute or two you will see the simulator in your list of simulators on the bonsai web page.
-* Launch the simulator to automatically generate the Inkling code for the SimState, SimAction and SimConfig corresponding to
-the model you have uploaded. ![](docs/BonsaiLaunchSimulator.png)
-* Once your Inkling is generated, use the "Create Brain" button to automatically create some template Inkling code to use as a start to train a brain.
+* Launch the simulator to automatically generate the interface Inkling code for the SimState, SimAction and SimConfig corresponding to
+the model you have uploaded.  ![](docs/BonsaiLaunchSimulator.png)
+* Once your interface Inkling is generated, use the "Create Brain" button to automatically create some template Inkling code to use as a start to train a brain.
 ![](docs/BonsaiCreateBrain.png)
+
 ## Samples
 
 Use these links to explore the sample VP Link models you can use to train a Bonsai brain.
