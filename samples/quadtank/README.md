@@ -13,6 +13,7 @@ and very worthy of an acedemic exercise.
 
 The process is illustrated below.  Your mission, should you choose to accept it, is to build a brain
 that controls the level in the two tanks to their setpoints for various level setpoints and values of Gamma1 and Gamma2.
+Use the supplied [VP Link loadable](quadtank_sim.zip) to create your Bonsai Simulator.
 Read the supplied [process description](QuadTankExplanation.pdf) for more information about how the process works and how this model was built with VP Link.
 
 Hint: You might not want to train the brain to cover the entire state space at once.  Or maybe you do...

@@ -7,8 +7,9 @@ performance over a range of target control philosophies.
 
 The process is illustrated below.  Your mission, should you choose to accept it, is to build a brain
 that controls the two Action tags in order to bring the level as measured in LI100 close to the setpoint as given in LI100_SP for
-any given setpoint between 5% and 95% without overflowing the tank or letting it get empty.  Read the supplied process description
-for more information about how the process works.
+any given setpoint between 5% and 95% without overflowing the tank or letting it get empty.
+Use the supplied [VP Link loadable](simpletank_sim.zip) to create your Bonsai Simulator.
+Read the supplied [process description](SimpleTankExplanation.pdf) for more information about how the process works.
 
 ![](simpletank.png)
 
