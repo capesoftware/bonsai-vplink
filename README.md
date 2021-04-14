@@ -12,14 +12,15 @@ Other users can use the samples and documentation to experiment with creating a 
 VP Link Users:
 * Copy the executables to the CapeSoftware\VPLink3 directory.
 * Use the Bonsai Tag Integration page from the Bonsai.rev file to add VP Link tags to your SimState and SimAction structures.
-* You can connect your local VP Link simulation to Bonsai to experiment with training a brain.
-* Once you have your local VP Link simulation working with Bonsai, use the Bonsai Loadable page from the Bonsai.rev file to create your VP Link loadable on your local machine.
-* Add a Simulator to your workspace by uploading the loadable to the Bonsai web site and train a brain at scale.
+* You can connect your local VP Link simulation to Bonsai to experiment with training a brain with the VPLinkSim_Bonsai3.exe program.
+* Once you have your local VP Link simulation working with Bonsai, use the
+Bonsai Loadable page from the Bonsai.rev file to create your customized VP Link loadable on your local machine.
+* [Add a Simulator](./#usage-adding-a-vp-link-simulator-to-your-workspace) to your workspace by uploading the loadable to the Bonsai web site and train a brain at scale.
 
 
 Other Users:
 * Browse the documentation and use one of the existing sample simulations to explore how to train a brain with the Inkling language.
-* Add a Simulator to your workspace by uploading the loadable to the Bonsai web site and train a brain at scale.
+* [Add a Simulator](./#usage-adding-a-vp-link-simulator-to-your-workspace) to your workspace by uploading the loadable to the Bonsai web site and train a brain at scale.
 
 ## Concepts: What is a VP Link loadable?
 
@@ -68,14 +69,24 @@ new tags, etc.
 ## Usage: Adding a VP Link simulator to your workspace
 
 You can easily add a VP Link simulator to your Bonsai workspace using the built-in VP Link simulator.
+You should have a VP Link loadable ready to upload.  Either use one of the samples, or if you have VP Link running locally,
+create one from your running VP Link model.
 
 * From the bonsai web page, click the Add Simultor button in the left panel.  ![Add Simulator button image](docs/BonsaiAddSim.png)
 * Choose the VP Link simulator.  You will see a window where you can upload your VP Link loadable. ![](docs/AddSimUploadModel.png)
-* Upload your VP Link loadable by dragging it from your local machine to the window.
-* Give the simulator a name and click the "Create Simulator" button.
-In a minute or two you will see the simulator in your list of simulators on the bonsai web page.
+* Upload your VP Link loadable by dragging it from your local machine to the window.  Give the simulator a name and click the "Create Simulator" button.
+You will see the bonsai platform creating your simulator image.  In a minute or two you will see the simulator in your list of simulators on the bonsai web page.
 * Launch the simulator to automatically generate the Inkling code for the SimState, SimAction and SimConfig corresponding to
-the model you have uploaded.
+the model you have uploaded. ![](docs/BonsaiLaunchSimulator.png)
+* Once your Inkling is generated, use the "Create Brain" button to automatically create some template Inkling code to use as a start to train a brain.
+
+## Samples
+
+Use these links to explore the sample VP Link models you can use to train a Bonsai brain.
+
+* [Simple tank level control](samples/simpletank/README.md).  A good place to start training your first Bonsai brain.
+* [Quad-tank model](samples/quadtank/README.md).  A well-studied problem with a larger state space for Bonsai to explore.
+* [Enzyme Bug Reactor](samples/bugreactor/README.md).  Sample bioreactor illustrating deadtime and unmeasured process variables to control.
 
 ## Trademarks
 
