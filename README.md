@@ -69,7 +69,7 @@ new tags, etc.
 
 You can easily add a VP Link simulator to your Bonsai workspace using the built-in VP Link simulator.
 
-* From the bonsai web page, click the [Add Simultor button](docs/BonsaiAddSim.png) in the left panel.
+* From the bonsai web page, click the Add Simultor button in the left panel.  ![Add Simulator button image](docs/BonsaiAddSim.png)
 * Choose the VP Link simulator.  You will see a window where you can upload your VP Link loadable. ![](docs/AddSimUploadModel.png)
 * Upload your VP Link loadable by dragging it from your local machine to the window.
 * Give the simulator a name and click the "Create Simulator" button.
