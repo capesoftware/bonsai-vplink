@@ -23,14 +23,14 @@ Hint:  Consider tackling this problem with two different brains.
 ![](bugreactor.png)
 
 ## State Tags
-Temp_E002_In -- Feed inlet temperature to E002
-Temp_E002_Out -- Temperature at inlet of pasteurization loop
-Temp_E001_ShellIn\[10\] -- Outlet temperature of pasteurization loop
-F_FoodFlow -- flow of feed through E001 and E002
-TempSetpoint -- Desired temperature at inlet to pasteurization loop
+* Temp_E002_In -- Feed inlet temperature to E002
+* Temp_E002_Out -- Temperature at inlet of pasteurization loop
+* Temp_E001_ShellIn\[10\] -- Outlet temperature of pasteurization loop
+* F_FoodFlow -- flow of feed through E001 and E002
+* TempSetpoint -- Desired temperature at inlet to pasteurization loop
 
 ## Action Tags
-HeatIn -- Steam valve position supplying heat to E002
+* HeatIn -- Steam valve position supplying heat to E002
 
 
 
