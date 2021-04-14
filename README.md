@@ -15,12 +15,12 @@ VP Link Users:
 * You can connect your local VP Link simulation to Bonsai to experiment with training a brain with the VPLinkSim_Bonsai3.exe program.
 * Once you have your local VP Link simulation working with Bonsai, use the
 Bonsai Loadable page from the Bonsai.rev file to create your customized VP Link loadable on your local machine.
-* [Add a Simulator](./#usage-adding-a-vp-link-simulator-to-your-workspace) to your workspace by uploading the loadable to the Bonsai web site and train a brain at scale.
+* [Add a Simulator](#usage-adding-a-vp-link-simulator-to-your-workspace) to your workspace by uploading the loadable to the Bonsai web site and train a brain at scale.
 
 
 Other Users:
 * Browse the documentation and use one of the existing sample simulations to explore how to train a brain with the Inkling language.
-* [Add a Simulator](./#usage-adding-a-vp-link-simulator-to-your-workspace) to your workspace by uploading the loadable to the Bonsai web site and train a brain at scale.
+* [Add a Simulator](#usage-adding-a-vp-link-simulator-to-your-workspace) to your workspace by uploading the loadable to the Bonsai web site and train a brain at scale.
 
 ## Concepts: What is a VP Link loadable?
 
