@@ -60,12 +60,12 @@ new tags, etc.
 ## Usage: Adding a VP Link simulator to your workspace
 
 You can easily add a VP Link simulator to your Bonsai workspace using the built-in VP Link simulator.
-You should have a VP Link loadable ready to upload.  Either use one of the samples, or if you have VP Link running locally,
+You should have a VP Link loadable ready to upload.  Either use a loadable from one of the samples, or if you have VP Link running locally,
 create one from your running VP Link model using CreateBonsaiInterface.exe and CreateBonsaiLoadable.exe. Even better, use a
-Bonsai-enabled VP Link interface to create your customized loadable file. ![Bonsai tags page](docs/BonsaiCreateLoadable.png)
+Bonsai-enabled VP Link interface to create your customized loadable file as shown below. ![Bonsai tags page](docs/BonsaiCreateLoadable.png)
 
-* From the bonsai web page, click the Add Simulator button in the left panel.  ![Add Simulator button image](docs/BonsaiAddSim.png)
-* Choose the VP Link simulator.  You will see a window where you can upload your VP Link loadable. ![](docs/AddSimUploadModel.png)
+* Once you have a loadable, from the bonsai web page, click the Add Simulator button in the left panel.  ![Add Simulator button image](docs/BonsaiAddSim.png)
+* Choose the VP Link simulator icon.  You will see a window where you can upload your VP Link loadable. ![](docs/AddSimUploadModel.png)
 * Upload your VP Link loadable by dragging it from your local machine to the window.  Give the simulator a name and click the "Create Simulator" button.
 You will see the bonsai platform creating your simulator image.  In a minute or two you will see the simulator in your list of simulators on the bonsai web page.
 * Launch the simulator to automatically generate the interface Inkling code for the SimState, SimAction and SimConfig corresponding to
