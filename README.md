@@ -19,7 +19,7 @@ Bonsai Loadable page from the Bonsai.rev file to create your customized VP Link 
 
 
 Other Users:
-* Browse the documentation and use one of the existing sample simulations to explore how to train a brain with the Inkling language.
+* Browse the documentation and use one of the existing [sample simulations](samples/README.md) to explore how to train a brain with the Inkling language.
 * [Add a Simulator](#usage-adding-a-vp-link-simulator-to-your-workspace) to your workspace by uploading the loadable to the Bonsai web site and train a brain at scale.
 
 ## Concepts: What is a VP Link loadable?
@@ -72,14 +72,14 @@ You can easily add a VP Link simulator to your Bonsai workspace using the built-
 You should have a VP Link loadable ready to upload.  Either use one of the samples, or if you have VP Link running locally,
 create one from your running VP Link model.
 
-* From the bonsai web page, click the Add Simultor button in the left panel.  ![Add Simulator button image](docs/BonsaiAddSim.png)
+* From the bonsai web page, click the Add Simulator button in the left panel.  ![Add Simulator button image](docs/BonsaiAddSim.png)
 * Choose the VP Link simulator.  You will see a window where you can upload your VP Link loadable. ![](docs/AddSimUploadModel.png)
 * Upload your VP Link loadable by dragging it from your local machine to the window.  Give the simulator a name and click the "Create Simulator" button.
 You will see the bonsai platform creating your simulator image.  In a minute or two you will see the simulator in your list of simulators on the bonsai web page.
 * Launch the simulator to automatically generate the Inkling code for the SimState, SimAction and SimConfig corresponding to
 the model you have uploaded. ![](docs/BonsaiLaunchSimulator.png)
 * Once your Inkling is generated, use the "Create Brain" button to automatically create some template Inkling code to use as a start to train a brain.
-
+![](docs/BonsaiCreateBrain.png)
 ## Samples
 
 Use these links to explore the sample VP Link models you can use to train a Bonsai brain.
