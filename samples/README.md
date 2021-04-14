@@ -1,23 +1,22 @@
-# Sample VP Link simulation models
+# Tools for Bonsai/VPLink integration
 
-Use one of the sample simulations to experiment with various brain designs.  You can take advantage of
-and experiment with many of the Bonsai features such as:
-* using goals
-* using lessons and scenarios
-* using customized reward functions
-* using State Transform functions
-* using Action Transform functions
+The tools in this directory can be used by existing VP Link users to create VP Link loadables from their simulations.
 
-You may also find it instructive to explore the following topics:
-* How does adjusting the simulator time step affect the brain teaching performance?
-* Can customized reward functions do better than Goal-based rewards?
-* How can I use lessons to train a brain incrementally?
+These tools are not necessary to run the samples, as each sample already has a VP Link loadable file.
 
-Choose one of the following samples
+Further documentation can be found in the associated .html file or with the --help option.
 
-* [Simple Tank](simpletank/README.md) -- a great way to get started with Bonsai
-* [Quad Tank](quadtank/README.md) -- a more complicated control problem
-* [Enzyme Bug Reactor](bugreactor/README.md) -- simulation based on a real-world problem with deadtime and unmeasurable process variables.
+## CreateBonsaiInterface
 
-Each of these examples includes a VP Link loadable file that you can download and use to create a scalable simulator in the Bonsai platform.
+Creates the 'vplink_interface.json' file neede by Bonsai which is embedded in a VP Link loadable file.
+While this does not need VP Link to be running, it does work much better if it can talk to a running VP Link database.
+
+## CreateBonsaiLoadable
+
+Creates the VP Link loadable file from the source directory.
+
+## VPLinkSim_Bonsai3.exe
+
+Connects VP Link servers to Bonsai as unmanaged simulators.  Only works if you have VP Link installed locally.\
+See the associated help file for more information.
 

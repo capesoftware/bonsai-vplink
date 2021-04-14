@@ -1,0 +1,288 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#VP-Link-Swarm-integration">VP Link Swarm integration</a></li>
+      <li><a href="#Use-while-training-a-brain">Use while training a brain</a></li>
+      <li><a href="#Use-with-a-deployed-brain">Use with a deployed brain</a></li>
+    </ul>
+  </li>
+  <li><a href="#OPTIONS">OPTIONS</a></li>
+  <li><a href="#EXAMPLE">EXAMPLE</a></li>
+  <li><a href="#CHANGE-HISTORY">CHANGE HISTORY</a></li>
+  <li><a href="#TODO">TODO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>VPLinkSim_Bonsai3 - Connects a VP Link server to a Bonsai brain</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>VPLinkSim_Bonsai3.exe [options]</p>
+
+<p>Single character options are specified with one leading dash, long options with two leading dashes.</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><b>VPLinkSim_Bonsai3</b> is an program that will connect a VP Link server to a bonsai brain. This program can run locally to create an unmanaged simulator, it can run in a container to provide a managed, scalable simulator, and it can run with an exported brain during the deployment phase of a project.</p>
+
+<p>The program uses the bonsai-common Python interface to connect to bonsai brain during training and assessment activities. The program reads a JSON interface file that describes the specific State, Action and Config structures needed to interface with bonsai. This file is called vplink_interface.json and the location of that file can be specifed by a command line option if it is not located in the curret directory.</p>
+
+<p>The vplink_interface.json file should be created using the CreateBonsaiInterface program which will create the file from a list of VP Link tags that were specified as action and state tags. In fact, after reading the vplink_interface.json file the program is able to describe the Config, State and Action Inkling structures to the bonsai web site. This allows the web site to build the required Inkling code automatically. The user will then insert that code into a brain.</p>
+
+<p>Once the Inkling is created, it is important not to change the vplin_interface.json file as that would leave the VPLinkSim_Bonsai3 program out of sync with the bonsai brain. If you do need to change the Config, Action or State structures, you should use the VP Link interface to change the tags in the State or Action structures and recreate the vplink_interface.json file. Start this program with that new file and allow the bonsai web site to re-create the corresponding Inkling code. You can then copy and past the generated Inkling code into your brain.</p>
+
+<p>When this program is run locally, the end result is an unmanaged simulator appearing in your bonsai workspace. As such, there are a number of things that need to be specified for that to work. They are:</p>
+
+<dl>
+
+<dt id="Bonsai-Information">Bonsai Information</dt>
+<dd>
+
+<p>The Workspace ID, Simulation Access Key are required so bonsai knows into which workspace this simulator is to be created, and ensures you have the authority to do that. See the --workspace and --accesskey options for how these are specified.</p>
+
+<p>The Simulator Name can be used to keep different simulators distinct from each other. This is useful if there is more than one person working in a given workspace. Use the --simname option to specify this.</p>
+
+</dd>
+<dt id="VP-Link-Information">VP Link Information</dt>
+<dd>
+
+<p>The program also needs to know the name of the VP Link server to connect to. This program is integrated very well with the VP Swarm--see the subheading below and the --swarm option for more details.</p>
+
+</dd>
+<dt id="The-interface-file">The interface file</dt>
+<dd>
+
+<p>The program needs to read a vplink_interface.json file so it knows the layout of the Config, State and Action structures. This file is created with the CreateBonsaiInterface.exe program.</p>
+
+</dd>
+</dl>
+
+<h2 id="VP-Link-Swarm-integration">VP Link Swarm integration</h2>
+
+<p>Normally when this program is run, it connects to a single VP Link server and creates a single unmanaged simulator in the bonsai web interface. The VP Swarm is a set of VP Link servers all running the same VP Link simualation model, and addressed as a unit by the swarm name. This allows the VPLinkSim_Bonsai3 program to connect to the VP Link swarm, creating an unmanaged simulator for each VP Link server that is part of the swarm. All the simulators created in this fashion will have the same simulator name in the bonsai web interface--this is what allows bonsai to connet to all of them in parallel to speed up training. When building the unmanaged simulators for each VP Link server in the VP Swarm, use the --swarm SWARMNAME option instead of the --vpserver VPSERVER option.</p>
+
+<h2 id="Use-while-training-a-brain">Use while training a brain</h2>
+
+<h2 id="Use-with-a-deployed-brain">Use with a deployed brain</h2>
+
+<p>When communicating with a deployed brain using the http: endpoint, the program will automatically interrgate the endpoint to determine the required State from the endpoint. When started with no command given on the command line, the program will print some simple help.</p>
+
+<h1 id="OPTIONS">OPTIONS</h1>
+
+<dl>
+
+<dt id="workspace-WORKSPACE"><b>--workspace WORKSPACE</b></dt>
+<dd>
+
+<p>Sets the bonsai workspace ID this simulator is to be inserted into. There is no default, however the program can also receive the WORKSPACE from the SIM_WORKSPACE environment variable.</p>
+
+</dd>
+<dt id="accesskey-ACCESSKEY"><b>--accesskey ACCESSKEY</b></dt>
+<dd>
+
+<p>Sets the access key for authorization for the give workspace. There is no default, however the program can also receive the ACCESSKEY from the SIM_ACCESS_KEY environment variable.</p>
+
+</dd>
+<dt id="vpserver-VPSERVER"><b>--vpserver VPSERVER</b></dt>
+<dd>
+
+<p>Sets the name of the VP Link server to connect to. The default is &quot;&quot;, which means connect to the &#39;default server&#39;. The &#39;default server&#39; is the VP Link server that is named &quot;vp_{hostname}&quot;.</p>
+
+</dd>
+<dt id="progress"><b>--progress</b></dt>
+<dd>
+
+<p>Instructs the program to emit additional progress information. This can be specified multiple times to increase the verbosity of the program.</p>
+
+</dd>
+<dt id="nowork"><b>--nowork</b></dt>
+<dd>
+
+<p>Do everything except the final step of communicating with the bonsai brain. Useful for debugging.</p>
+
+</dd>
+<dt id="timestep-TIMESTEP"><b>--timestep TIMESTEP</b></dt>
+<dd>
+
+<p>Sets the default timestep. This is not implemented. The timestep is set from the Inkling code now.</p>
+
+</dd>
+<dt id="reportEvery-REPORTEVERY"><b>--reportEvery REPORTEVERY</b></dt>
+<dd>
+
+<p>Sets the simeulation time that needs to elapse before the state is reported back to the bonsai brain. This may be a number of VP Link simulation timesteps. This is not implemented. The REPORTEVERY is set from the Inkling code now.</p>
+
+</dd>
+<dt id="deployed"><b>--deployed</b></dt>
+<dd>
+
+<p>Indicates that the program is to talk to a deployed brain. You may also want to use the --depurl to set the location of the deployed brain.</p>
+
+</dd>
+<dt id="depurl-DEPURL"><b>--depurl DEPURL</b></dt>
+<dd>
+
+<p>Sets the url of the deployed brain. The default value is https://localhost:5000/v1/prediction. Setting this option is only relevant if the --deployed option is also given.</p>
+
+</dd>
+<dt id="swarm-SWARMNAME"><b>--swarm SWARMNAME</b></dt>
+<dd>
+
+<p>Will connect a copy of of this program to each of the VP Link servers found in the swarm with the given name. This option and the --vpserver option are mutually exclusive.</p>
+
+</dd>
+<dt id="simname-SIMNAME"><b>--simname SIMNAME</b></dt>
+<dd>
+
+<p>Sets the name of the unmanaged simulator in the bonsai web page.</p>
+
+</dd>
+<dt id="jsondir-JSONDIR"><b>--jsondir JSONDIR</b></dt>
+<dd>
+
+<p>Sets the location of the vplink_interface.json file. This is used by the VP Link GUI to locate the vplink_iterface.json that was most recently created in the &quot;loadable/Loadable&quot; directory. The default value is the current directory.</p>
+
+</dd>
+<dt id="holdatexit"><b>--holdatexit</b></dt>
+<dd>
+
+<p>Used to aid in debugging. When this option is given, the program will hold with a &quot;Hit return to end program&quot; prompt. This enables you to observe the program&#39;s output before it dissappears.</p>
+
+</dd>
+<dt id="help"><b>--help</b></dt>
+<dd>
+
+<p>Prints the usage summary. Looks like this:</p>
+
+<pre><code><code> usage: VPLinkSim_bonsai3.py [-h] [--vpserver VPSERVER] [--progress] [--nowork] [--timestep TIMESTEP] [--reportevery REPORTEVERY] [--deployed]
+                             [--depurl DEPURL] [--swarm SWARM] [--workspace WORKSPACE] [--accesskey ACCESSKEY] [--simname SIMNAME] [--holdatexit]
+                             [--jsondir JSONDIR] [--version] [--allversion]
+
+ optional arguments:
+   -h, --help            show this help message and exit
+   --vpserver VPSERVER   specify the VP Link server to talk to
+   --progress            print additional information while running
+   --nowork              do not do anything, just pretend
+   --timestep TIMESTEP   sets simulation time step (not implemented)
+   --reportevery REPORTEVERY
+                         sets reporting time to bonsai
+   --deployed            talk to a deployed brain
+   --depurl DEPURL       url endpoint of the deployed brain
+   --swarm SWARM         starts simulators for a VPSwarm
+   --workspace WORKSPACE
+                         sets the workspace ID
+   --accesskey ACCESSKEY
+                         sets the access key
+   --simname SIMNAME     sets the unmanaged simulator name
+   --holdatexit          waits for a &lt;return&gt; before finally exiting
+   --jsondir JSONDIR     Specifies root dir for vplink_interface.json, ./cfg/, ./sces/
+   --version, -v         prints the version
+   --allversion          prints all the versions</code></code></pre>
+
+</dd>
+<dt id="progress1"><b>--progress</b></dt>
+<dd>
+
+<p>Prints some extra information to the screen as the program runs. Adding additional --progress options increases the amount of progress information that is printed.</p>
+
+</dd>
+<dt id="version"><b>--version</b></dt>
+<dd>
+
+<p>Prints the version of the program and exits.</p>
+
+</dd>
+<dt id="allversion"><b>--allversion</b></dt>
+<dd>
+
+<p>Prints the version of the program and dependent modules, then exits.</p>
+
+</dd>
+</dl>
+
+<h1 id="EXAMPLE">EXAMPLE</h1>
+
+<p>VPLinkSim_Bonsai3.exe --accesskey ABCD123... --workspace xxx.... # Connects to the default VP Link server and creates a brain called VPLink3b</p>
+
+<p>VPLinkSim_Bonsai3.exe --deployed --depurl http://localhost/v1/prediction --vpserver vp_test # Connects the vp_test server to the deployed brain at the url.</p>
+
+<h1 id="CHANGE-HISTORY">CHANGE HISTORY</h1>
+
+<p>17-Jul-2020 WDJ v0.6 Changes for Linux</p>
+
+<p>17-Jul-2020 WDJ v0.7 Updated Linux so all sims appear as tabs in the same window</p>
+
+<p>17-Jul-2020 WDJ v0.8 Updated to find the &quot;initialValues&quot; and &quot;simState&quot; in the SimConfig</p>
+
+<p>08-Oct-2020 WDJ v0.9.1 Updated to find the &quot;initialValues&quot; and &quot;simState&quot; in the SimConfig</p>
+
+<p>15-Oct-2020 WDJ v1.0 Updated to use vplinksimulator from vpbonsai instead of vpbonsai_test</p>
+
+<p>24-Oct-2020 WDJ v1.1 Updated to use bonsai-common instead of bonsai3</p>
+
+<p>25-Oct-2020 WDJ v1.2 Updated to set the start,stop values for action tags when connected to VP Link</p>
+
+<p>13-Nov-2020 WDJ v1.3 Removed sensitive comments</p>
+
+<p>18-Nov-2020 WDJ v1.4 Added logic to talk to an exported brain</p>
+
+<p>18-Nov-2020 WDJ v1.5 Added more logic to talk to an exported brain with arbitrary configuration</p>
+
+<p>26-Jan-2021 WDJ v1.6 Logic to talk to arbitrary exported brain is working.</p>
+
+<p>26-Jan-2021 WDJ v1.7 Added quotes around the filename in the child command lines. And now worked with bundled .EXE</p>
+
+<p>16-Feb-2021 WDJ v1.7.1 Now workes with bundled .EXE</p>
+
+<p>16-Feb-2021 WDJ v1.7.2 Added --holdatexit option</p>
+
+<p>17-Feb-2021 WDJ v1.8 Added --jsondir option to facilitate running locally from VP Link interface.</p>
+
+<p>02-Mar-2021 WDJ v1.8.1 Minor changes for formatting</p>
+
+<h1 id="TODO">TODO</h1>
+
+<ul>
+
+<li><p>Nothing at this time.</p>
+
+</li>
+</ul>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>The Elves at Cape Software (elves@capesoftware.com)</p>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+

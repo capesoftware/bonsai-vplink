@@ -1,0 +1,183 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#OPTIONS">OPTIONS</a></li>
+  <li><a href="#EXAMPLE">EXAMPLE</a></li>
+  <li><a href="#CHANGE-HISTORY">CHANGE HISTORY</a></li>
+  <li><a href="#TODO">TODO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>CreateBonsaiInterface - Creates a vplink_interface.json file for use with Bonsai</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>CreateBonsaiInterface.exe --statetags STATETAGS --actiontags ACTIONTAGS --outfile sim.zip [options]</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><b>CreateBonsaiInterface</b> is a program that will create a vplink_interface.json file for use with Microsoft Bonsai. This interface file describes the information that flows back and forth between the Bonsai platform and the VP Link simulator. This interface describes the fields of the SimState and SimAction structures used by Bonsai, allowing the Bonsai web site to automatically generate Inkling code for those structures.</p>
+
+<p>The list of VP Link tags used in the SimState and SimAction structures is specified on the command line. Various GUI integrations, including the &quot;Bonsai Integration&quot; page in the VP Link GUI allow you to select these tags and create the command line argument list.</p>
+
+<h1 id="OPTIONS">OPTIONS</h1>
+
+<dl>
+
+<dt id="statetags-STATETAGS"><b>--statetags STATETAGS</b></dt>
+<dd>
+
+<p>STATETAGS is a comma-separated list of VP Link tags to include in the SimState structure. This is required.</p>
+
+</dd>
+<dt id="actiontags-ACTIONTAGS"><b>--actiontags ACTIONTAGS</b></dt>
+<dd>
+
+<p>ACTIONTAGS is a comma-separated list of VP Link tags to include in the SimAction structure. This is required.</p>
+
+</dd>
+<dt id="vpserver-VPSERVER"><b>--vpserver VPSERVER</b></dt>
+<dd>
+
+<p>Sets the name of the VP Link server to connect to. This is not required, but if it is specified, the program will verify that each of the tags in the STATETAGS and ACTIONTAGS exist. In addition, The VP Link description will be extracted from the corresponding tag to be added as a comment in the Inkling code. The program will also extract the range (EULo-EUHi) for the analog tags to include in the Inkling comment.</p>
+
+</dd>
+<dt id="driver-DRIVER"><b>--driver DRIVER</b></dt>
+<dd>
+
+<p>This option requires the --vpserver option as well. If the VP Link tag database has been previously set up for use with Bonsai, then tags being communicated to and from Bonsai may have been assigned a specific driver name. With this option, the program will interrogate the named VPSERVER and determine the list of STATETAGS and ACTIONTAGS as those that are associated with the give DRIVER.</p>
+
+</dd>
+<dt id="simname-SIMNAME"><b>--simname SIMNAME</b></dt>
+<dd>
+
+<p>Allows the simualator name to be specified if no other mechanism was used. Normally the simname will be set from the &quot;Add Simulator&quot; dialog in the Bonsai platform.</p>
+
+</dd>
+<dt id="outfile-OUTFILE"><b>--outfile OUTFILE</b></dt>
+<dd>
+
+<p>Redirects the output to a file. By default the output goes to the terminal on stdout.</p>
+
+</dd>
+<dt id="rootdir-ROOTDIR"><b>--rootdir ROOTDIR</b></dt>
+<dd>
+
+<p>Specifies where the output file should be sent. In addition, the directory structure at that location is scanned for files in the &quot;cfg&quot; directory. Using this option allows more accurate comments to be generated in the auto-generated Inkling file.</p>
+
+</dd>
+<dt id="progress"><b>--progress</b></dt>
+<dd>
+
+<p>Instructs the program to emit additional progress information. This can be specified multiple times to increase the verbosity of the program.</p>
+
+</dd>
+<dt id="timestep-TIMESTEP"><b>--timestep TIMESTEP</b></dt>
+<dd>
+
+<p>Sets the default VP Link timestep (secs) in the SimConfig structure.</p>
+
+</dd>
+<dt id="reportEvery-REPORTEVERY"><b>--reportEvery REPORTEVERY</b></dt>
+<dd>
+
+<p>Sets the simulation time that needs to elapse before the state is reported back to the bonsai brain. Units are seconds. This may be a number of VP Link simulation timesteps and should be greater than or equal to the TIMESTEP.</p>
+
+</dd>
+<dt id="help"><b>--help</b></dt>
+<dd>
+
+<p>Prints the usage summary. Looks like this:</p>
+
+<p>usage: CreateBonsaiInterface.exe [-h] [--vpserver VPSERVER] [--driver DRIVER] [--statetags STATETAGS] [--actiontags ACTIONTAGS] [--simname SIMNAME] [--outfile OUTFILE] [--rootdir ROOTDIR] [--progress] [--timestep TIMESTEP] [--reportevery REPORTEVERY] [--version]</p>
+
+<p>optional arguments: -h, --help show this help message and exit --vpserver VPSERVER specify the VP Link server to talk to --driver DRIVER choose tags from the specified driver --statetags STATETAGS list of tags to put into the State --actiontags ACTIONTAGS list of tags to put into the Action --simname SIMNAME sets simulator name --outfile OUTFILE specify output .json file (default=stdout) --rootdir ROOTDIR location of loadable root dir (used to find .icf files) --progress print additional information while running --timestep TIMESTEP sets simulation time step --reportevery REPORTEVERY sets reporting time to bonsai --version, -v prints the version</p>
+
+</dd>
+<dt id="version"><b>--version</b></dt>
+<dd>
+
+<p>Prints the version of the program and exits.</p>
+
+</dd>
+<dt id="allversion"><b>--allversion</b></dt>
+<dd>
+
+<p>Prints the version of the program and dependent modules, then exits. Output looks like this:</p>
+
+<pre><code><code>  CreateBonsaiInterface.exe 0.9</code></code></pre>
+
+</dd>
+</dl>
+
+<h1 id="EXAMPLE">EXAMPLE</h1>
+
+<p>VPLinkSim_Bonsai3.exe --statetags TankLevel1,TankLevel2,Tank1_SP,Tank2_SP --actiontags Pump1Speed,Pump2Speed --outfile sim.zip # Creates a sim.zip file in the current directory</p>
+
+<h1 id="CHANGE-HISTORY">CHANGE HISTORY</h1>
+
+<pre><code><code>  07-Oct-2020 WDJ v0.1 Initial work
+
+  07-Oct-2020 WDJ v0.2 Working, added --outfile optional argument
+
+  15-Oct-2020 WDJ v0.3 removed unsupported simState from the Config, added better integration with VP Link
+                       Requires version 0.5.6 of the Python VP Link interface
+
+  15-Oct-2020 WDJ v0.4 Added the --driver option to grab all the tags from the specified (Bonsai) driver
+
+  24-Oct-2020 WDJ v0.5 Added the --simname option to set the simulator name (Package Name in Bonsai web site)
+                       Fixed typo IntefaceConfig -&gt; InterfaceConfig
+
+  12-Nov-2020 WDJ v0.6 Added support for arrays in the tagname list like, LI100[5]
+
+  13-Nov-2020 WDJ v0.7 Fixed a bug mixing up some tags. No arrays in the Config structure
+
+  17-Mar-2021 WDJ v0.8 Added comments to the JSON so user knows what .icf files are available.
+
+  19-Mar-2021 WDJ v0.9 Add limits to the state tags. Makes it easier for Bonsai. Print version in first member of Config.</code></code></pre>
+
+<h1 id="TODO">TODO</h1>
+
+<ul>
+
+<li><p>Use the ROOTDIR as the default location of the sim.zip output file.</p>
+
+</li>
+</ul>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>The Elves at Cape Software (elves@capesoftware.com)</p>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+
