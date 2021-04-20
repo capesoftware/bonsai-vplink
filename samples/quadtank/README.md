@@ -42,6 +42,10 @@ train a brain.  This example is a simple brain design (one concept) and will tra
 
 If you use the QuadTankSimple.ink inkling file, you may get results like this.  ![](QuadTankSimple_BrainTraining.png)
 
+Once you get a trained brain, you might want to test that brain with other Gamma values to see how well it does at conditions other than
+what it was trained against.
+
+
 ### Using initial conditions files
 
 Note in the QuadTank examples, the SimState includes three tags that are related to the Gamma values.  Gamma1 and Gamma2 control the percent
