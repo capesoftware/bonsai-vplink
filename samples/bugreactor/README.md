@@ -33,4 +33,7 @@ Hint:  Consider tackling this problem with two different brains.
 * HeatIn -- Steam valve position supplying heat to E002
 
 
+There are two different samples here, bugreactor-temp_sim.zip and bugreactor-rxn_sim.zip.
+
+
 
