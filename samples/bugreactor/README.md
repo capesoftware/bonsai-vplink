@@ -23,17 +23,37 @@ Hint:  Consider tackling this problem with two different brains.
 ![](bugreactor.png)
 
 ## State Tags
-* Temp_E002_In -- Feed inlet temperature to E002
-* Temp_E002_Out -- Temperature at inlet of pasteurization loop
-* Temp_E001_ShellIn\[10\] -- Outlet temperature of pasteurization loop
-* F_FoodFlow -- flow of feed through E001 and E002
-* TempSetpoint -- Desired temperature at inlet to pasteurization loop
+* LvlFermenter -- Volume of material in the fermenter
+* Reactor_Temp -- Temperature of the fermentor
+* Reactor_pH   -- pH of the fermenter
+* Temp_E003_Out -- Temperature of fermenter feed
+* BugsProdRate  -- Production rate of bugs
+* FoodFeedRate  -- Flowrate of food to the fermenter
+* Temp_E001_ShellIn\[4\] -- Outlet temperature of pasteurization loop
 
 ## Action Tags
-* HeatIn -- Steam valve position supplying heat to E002
+* V_Acid_Open_Vlv -- Valve supplying acid to the fermenter
+* V_Base_Open_Vlv -- Valve supplying base to the fermenter
+* LvlFermenter_SP -- Setpoint for the level in the fermenter
+* FlowSetPoint   -- Setpoint for the feed flow to the fermenter
+* TempCWSetPoint -- Setpoint for the fermenter feed temperature
+* TempSetPoint   -- Septoint for the pasteurization inlet temperature
 
+There used to be two different samples here, bugreactor-temp_sim.zip and bugreactor-rxn_sim.zip, but
+now that is replaced by one loadable, bugreactor_sim.zip.  The loadable has three separate .ICF files
+which you can use to initialize the model to one of three states.  This means you can use the same sim to train
+your bugreactor brains.
 
-There are two different samples here, bugreactor-temp_sim.zip and bugreactor-rxn_sim.zip.
+## Initial Conditions Files
+* PasteurizationStartup.icf -- The pasteurization loop is at 90 degrees, no flow to the reactor, so all the flow is recycling to the feed tank.
+Start here to train a brain to get the pasteurization loop up to a stable 175 degrees throughout, as fast as possible.
+![Pasteurization Startup screenshot](bugreactor_PasteurizationStartup.png)
+* ReactorStartup.icf -- The pasteurization loop is stable at 175 degrees.  There is no flow to the reactor.  The reactor has 300 l in it, there
+is 300 kg of food.  The reactor has just been innoculated with 10 kg of bugs.  Start here to train a brain to maximize the production rate of bugs.
+![Pasteurization Startup screenshot](bugreactor_ReactorStartup.png)
+* ReactorOperation.icf -- The reactor is running at a pretty decent production rate of bugs.
+* Magic_pH_Control.icf -- Add this to your \_initialconditions: SimConfig member if you don't want to worry about
+the pH control in the reactor.  This is a good idea until you get a brain trained that will do the pH controls.
 
 
 
