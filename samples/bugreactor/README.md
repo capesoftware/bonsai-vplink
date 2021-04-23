@@ -1,25 +1,26 @@
 # Bug Reactor VP Link model
 
 > A viable Bonsai brain design suitable for a "sample" has not been completed for this simulation at this time.
-Brain designs are still in progress, so a sample
-loadable with specific State and Action tags that will work is not yet available.  The two loadables are the current best effort.
-You have been warned.
+Brain designs are still in progress, so there is not a sample Inkling file, but a sample
+loadable with specific State and Action tags that will work is now available.  See the mention of Initial Conditions
+to choose the appropriate initial state of the model for the brain you are training.
 
 The Bug Reactor model demonstrates various control loops that need to work in a coordinated fashion.  This is a model of an industrial
 bioreactor used to produce enzymes.  The enzymes are produced by laboratory organisms grown in a continuous fermenter.  There are
 two main control issues;
 1. Maintain the sterility of the feed using a pasteurization loop.  This introduces deadtime to the temperature controller.  This is
 complicated by the fact that there is a time vs. temperature relationship that must be maintained in the pasteurization loop.
-2. Maintain the optimal concentration of organisms in the reactor.  This is not measured directly but can be inferred from other process measurements.
+2. Maintain the optimal concentration of organisms in the reactor.  This is not measured directly but can be inferred from
+other process measurements including the production rate of bugs.
 
 The process is illustrated below.  Your mission, should you choose to accept it, is to build a brain
 that maintains the pastuerization of the feed as well as the optimum concentration of bugs in the reactor for maximum production.
-Use the supplied [VP Link loadable](bugreactor-temp_sim.zip) to create your Bonsai Simulator.  Until the warning above regarding the state of this brain design is removed,
-it is likely that only those with access to VP Link will be able to create the proper SimState and SimAction structures for a viable brain design.
+Use the supplied [VP Link loadable](bugreactor_sim.zip) to create your Bonsai Simulator.
 Read the supplied [process description](BugReactorExplanation.pdf) for more information about how the process works to guide you in your journey.
 
 Hint:  Consider tackling this problem with two different brains.
 
+The image below shows the bug reactor working at close to optimial conditions.
 ![](bugreactor.png)
 
 ## State Tags
@@ -50,10 +51,11 @@ Start here to train a brain to get the pasteurization loop up to a stable 175 de
 ![Pasteurization Startup screenshot](bugreactor_PasteurizationStartup.png)
 * ReactorStartup.icf -- The pasteurization loop is stable at 175 degrees.  There is no flow to the reactor.  The reactor has 300 l in it, there
 is 300 kg of food.  The reactor has just been innoculated with 10 kg of bugs.  Start here to train a brain to maximize the production rate of bugs.
-![Pasteurization Startup screenshot](bugreactor_ReactorStartup.png)
+![Reactor Startup screenshot](bugreactor_ReactorStartup.png)
 * ReactorOperation.icf -- The reactor is running at a pretty decent production rate of bugs.
 * Magic_pH_Control.icf -- Add this to your \_initialconditions: SimConfig member if you don't want to worry about
 the pH control in the reactor.  This is a good idea until you get a brain trained that will do the pH controls.
 
-
+## Things to consider
+* How long should a brain training episode be in simulated time?
 
