@@ -9,6 +9,8 @@ Other users can use the [samples](samples/README.md) and documentation to experi
 > Coming Soon -- Watch for the upcoming "VP Link for Cloud Development" on the Azure Marketplace.  This Azure offering will allow you to create your own simulation
 models, modify the samples, and update VP Link loadables for use with Bonsai.  Currently it is in preview to a limited audience.
 
+Have a question?  Something not clear?  Try (brainquestions at capesoftware.com)
+
 ## Installation
 
 ### VP Link Users
