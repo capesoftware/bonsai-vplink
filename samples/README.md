@@ -21,3 +21,10 @@ Choose one of the following samples
 
 Each of these examples includes a VP Link loadable file that you can download and use to create a scalable simulator in the Bonsai platform.
 
+## For VP Link Users
+
+If you have VP Link installed locally, you can use the .REV files as your GUI to observe and manipulate the model.
+
+On each of the samples, there is a "Bonsai Integration" page, as well as a "Bonsai Tags" page.  You can use the buttons
+on these pages to connect the local VP Link server to Bonsai as an unmanaged sim, as well as create your own
+loadables.
