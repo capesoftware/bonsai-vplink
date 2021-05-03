@@ -6,6 +6,8 @@ Existing VP Link users can utilize these [tools](tools/README.md) to create thei
 
 Other users can use the [samples](samples/README.md) and documentation to experiment with creating a brain to control any of the samples.
 
+> Coming Soon -- Watch for the upcoming "VP Link for Cloud Development" on the Azure Marketplace.  Currently it is in preview to a limited audience.
+
 ## Installation
 
 ### VP Link Users
