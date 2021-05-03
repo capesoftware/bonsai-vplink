@@ -1,6 +1,6 @@
 # VP Link connector
 
-A collection of tools and sample files allowing users to run VP Link simulations with [Microsoft Project Bonsai](https://azure.microsoft.com/en-us/services/project-bonsai/).
+A collection of tools and sample files describing how to run VP Link simulations with [Microsoft Project Bonsai](https://azure.microsoft.com/en-us/services/project-bonsai/).
 
 Existing VP Link users can utilize these [tools](tools/README.md) to create their own VP Link loadable files which can be used to create a scalable VP Link simulation on the bonsai web site.
 
