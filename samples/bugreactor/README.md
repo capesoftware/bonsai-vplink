@@ -111,7 +111,7 @@ your own, updated loadable file.
 
 ### Narrow the SimState
 
-> While the following intstrucions do the job, we are working on a better, more concise mechanism to do the same thing.
+> While the following instrucions do the job, we are working on a better, more concise mechanism to do the same thing.
 
 This is a classic way to improve brain training performance.  Since the SimState includes all sorts of variables that do not pertain to the pasteurization step,
 it is advantageous to remove these from the state that is passed to the Sterilize concept.  You can do this with a programmed concept.  The programmed concept will
@@ -197,4 +197,4 @@ examples of how to train a complex brain to control other elements of this probl
 
 # Other Resources
 
-[Writing Reward Functions](https://medium.com/@BonsaiAI/reward-functions-writing-for-reinforcement-learning-video-85f1219a0bde)
+[Writing Reward Functions Video](https://medium.com/@BonsaiAI/reward-functions-writing-for-reinforcement-learning-video-85f1219a0bde)
