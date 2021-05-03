@@ -78,7 +78,7 @@ In reality, there is only one that needs to be manipulated, and that is the Temp
 uneeded members of the SimAction structure.  You may also want to narrow the range of the output to some more reasonable values instead of
 0..200.  There is really no process reason why that setpoint value would ever be, say, less than 100.  You should end up with something like this:
 
-```
+```inkling
 type SimAction {
     ## VP Link analog tag (0.0,100.0), Eu=%;
     #V_Acid_Open_Vlv: number<0.0 .. 100.0>,
@@ -119,7 +119,7 @@ take the large SimState and return a new state, called PasteurizeState.  This ne
 Note that the FoodFeedRate was left in this new state just in case the action of the temperature controller is affected by the flowrate of material through the sterilizer.
 Copy the code below right above the graph statement.
 
-```
+```inkling
 type PasteurizeState {
     Temp_E003_Out: number<0.0 .. 300.0>,
     # VP Link analog tag (0.0,1000.0), EU=kg/min; Production rate of bugs
