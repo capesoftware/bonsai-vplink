@@ -1,3 +1,12 @@
+# Sample Inkling for VP Link Enzyme Reactor demonstration
+
+# Overview
+# Use a VP Link model to teach a Bonsai brain to startup and control
+# a continuous enzyme reactor
+
+# More details about the model are available at
+# https://github.com/capesoftware/bonsai-vplink/tree/main/samples/enzymereactor
+
 inkling "2.0"
 using Goal
 using Math
@@ -43,6 +52,8 @@ type SimState {
     # VP Link analog tag (0.0,300.0), Eu=°F;
     Temp_ReactorFood_In: number<0.0 .. 300.0>[3],
 }
+
+#define a type that returns the per-iteration Actions sent to the simulator
 type SimAction {
     # VP Link analog tag (0.0,2000.0), EU=l; Setpoint for Level in the Fermenter (normally 300)
     Reactor_Level_Setpoint_C: number<300.0 .. 1800.0>,
@@ -64,7 +75,7 @@ type SimAction {
     FlowSetPoint_St: number<10.0 .. 15.0>,
 }
 
-
+#define a type that is the Simulation configuration
 type SimConfig {
     # VP Link configuration (deprecated); Built from CreateBonsaiInterface v0.9.1
     _configNumber: number,
@@ -112,7 +123,8 @@ type SimConfig {
     Temp_ReactorFood_In: number<0.0 .. 300.0>,
 }
 
-#define Reactor Startup narrowed Action Space
+#define narrowed Action Space for Reactor Startup process conditions
+# (see github repository for detail on different process modes)
 type ReactorStartupAction {
     # VP Link analog tag (0.0,2000.0), EU=l; Setpoint for Level in the Fermenter (normally 300)
     Reactor_Level_Setpoint_St: number<1100.0 .. 1250.0>,
@@ -127,7 +139,9 @@ type ReactorStartupAction {
     # VP Link analog tag (0.0,130.0), EU=l/min;
     FlowSetPoint_St: number<10.0 .. 15.0>,
 }
-#define the Reactor Continuous narrowed Action space
+
+#define the narrowed Action space for the Continuous mode conditions
+# (see github repository for detail on different process modes)
 type ContinuousAction {
     # VP Link analog tag (0.0,2000.0), EU=l; Setpoint for Level in the Fermenter (normally 300)
     Reactor_Level_Setpoint_C: number<300.0 .. 1800.0>,
@@ -143,6 +157,8 @@ type ContinuousAction {
     FlowSetPoint_C: number<0.0 .. 130.0>,
 }
 
+#define the narrowed Action space for the Pasteurisation mode conditions
+# (see github repository for detail on different process modes)
 type SterilisationAction {
     PastLoop_TempSetpoint: number<160.0 .. 185.0>
 }
@@ -165,7 +181,7 @@ function ReducePasteurizeState(s: SimState) : PasteurizeState
     }
 }
 
-#Define the reactor startup state space
+#Define the reactor startup mode state space
 type ReactorStartupState {
     # VP Link analog tag (0.0,2000.0), Level Tag at press =1.4; lfngen:\otherusers\winston\MicrobeReactor\MicrobeReactorDD.xls[lfnWDJ]
     LvlFermenter: number<0.0 .. 2000.0>[3],
@@ -200,7 +216,7 @@ function ReduceReactStartState(s: SimState) : ReactorStartupState
 }
 
 
-#Define the reactor startup state space
+#Define the Continuous state space
 type ContinuousState {
     # VP Link analog tag (0.0,2000.0), Level Tag at press =1.4; lfngen:\otherusers\winston\MicrobeReactor\MicrobeReactorDD.xls[lfnWDJ]
     LvlFermenter: number<0.0 .. 2000.0>[3],
@@ -243,28 +259,31 @@ simulator Simulator(action: SimAction, config: SimConfig): SimState {
     package "EnzymeReactorFinal"
 }
 
+#Define simulator that uses the narrowed action space Pasteurisation
 simulator SterilisationSimulator(action: SterilisationAction, config: SimConfig): SimState {
     # Automatically launch the simulator with this
     # registered package name.
     package "EnzymeReactorFinal"
 }
 
+#Define simulator that uses the narrowed action space for Reactor Startup
 simulator ReactorStartupSimulator(action: ReactorStartupAction, config: SimConfig): SimState {
     # Automatically launch the simulator with this
     # registered package name.
     package "EnzymeReactorFinal"
 }
 
+#Define simulator that uses the narrowed action space for Continuous
 simulator ContinuousSimulator(action: ContinuousAction, config: SimConfig): SimState {
     # Automatically launch the simulator with this
     # registered package name.
     package "EnzymeReactorFinal"
 }
 
-#define some constants to use in the Pasteurisation function
+#define a constant to use in the Pasteurisation function
 const kTooHot = 180.0
 
-#Pasteurisaiton rewards
+#Pasteurisaiton reward function
 function VPLinkReward(target: number, currentValue: number, radius: number)
 {
     # See https://medium.com/@BonsaiAI/reward-functions-writing-for-reinforcement-learning-video-85f1219a0bde
@@ -292,6 +311,7 @@ function VPLinkReward(target: number, currentValue: number, radius: number)
     return rewardA + precisionRewardFactor*(rewardB)
 }
 
+# This statement turns the generic VP Link reward into one specific to the Pasteurisation
 function PasteurReward( s: SimState)
 {
     var good: number
@@ -302,6 +322,9 @@ function PasteurReward( s: SimState)
 }
 
 # reward for the reactor conditions during startup, based on available measurements pH, Temperature and Oxygen %
+# This reward takes a different approach to the previous VP Link reward
+# Exponenetal reward is defined that will vary from 0 to 1 depending on how close to the specified setpoint 
+# the variable is. 
 function StartupReactorReward( s: SimState)
 {
 #reward return variables  
@@ -315,7 +338,8 @@ function StartupReactorReward( s: SimState)
     pHhalf = 0.5
     pHExponent = 2
     pHTarget = 7.5
-#pH function
+#pH mathematical function. This will create a distribution around the target value that varies from 0 to 1
+#The idea is bonsai will aim to maintain this process variable as close to 1 as it can
     pHreward = Math.E**(-(Math.Abs(s.Reactor_pH[0]-pHTarget)/pHhalf)*pHExponent)
 #Temperature variables    
     var temphalf: number
@@ -324,7 +348,8 @@ function StartupReactorReward( s: SimState)
     temphalf = 4
     tempExponent = 2
     tempTarget = 98
-#Temperature function
+#Temperature mathematical function. This will create a distribution around the target value that varies from 0 to 1
+#The idea is bonsai will aim to maintain this process variable as close to 1 as it can
     tempreward = Math.E**(-(Math.Abs(s.Reactor_Temp[0]-tempTarget)/temphalf)*tempExponent)
 #Oxygen variables    
     var O2half: number
@@ -333,14 +358,17 @@ function StartupReactorReward( s: SimState)
     O2half = 4
     O2Exponent = 2
     O2Target = 17.5
-#Oxygen function
+#Oxygen mathematical function. This will create a distribution around the target value that varies from 0 to 1
+#The idea is bonsai will aim to maintain this process variable as close to 1 as it can
     O2reward = Math.E**(-(Math.Abs(s.Reactor_O2[0]-O2Target)/O2half)*O2Exponent)
-#Return functions times each other- this is analogous to how the Microbe health is calculated
+#Return functions times each other to ensure bonsai aims to keep all variables as close to 1 as possible
+# this is analogous to how the Microbe health is calculated as described in github repository
     return (O2reward*tempreward*pHreward)
 }
 
 
-#Continuous reward function, this will be the same as the startup reward but factoring in enzyme production.
+#Continuous reward function, this will be the same as the startup reward but factoring in enzyme production and 
+# a factor that works with the reactor level
 function ContinuousReward (s: SimState)
 {
     #reward return variables  
@@ -385,10 +413,14 @@ function ContinuousReward (s: SimState)
     EnzymeTarget = 30
     #Enzyme function
     enzymereward = Math.E**(-(Math.Abs(s.Enzyme_Prod_Rate[0]-EnzymeTarget)/Enzymehalf)*EnzymeExponent)
+    # the following if statement will ensure that if the variable is above the target then the function retursn a 1
+    # this allows bonsai to learn to reach the target but not to be punished or incentivise to go above it
     if (s.Enzyme_Prod_Rate[0] > EnzymeTarget) 
     {
         enzymereward = 1
     }
+    #define the level aspect of the reward. This is intended to punish Bonsai if the tank level gets too low
+    # as long as the level is above target it will remain at a value of 1 and thus not affect the output
     var Levelhalf: number
     var LevelExponent: number
     var LevelTarget: number
@@ -400,7 +432,8 @@ function ContinuousReward (s: SimState)
     {
         levelreward = 1
     }
-    #Return functions times each other- this is analogous to how the Microbe health is calculated but factors in enzyme production rate
+    #Return functions times each other- this is analogous to how the Microbe health is calculated
+    # but factors in enzyme production rate and the level punishment
     return (O2reward*tempreward*pHreward*enzymereward*levelreward)
 }
 
@@ -417,7 +450,7 @@ graph (input: SimState): SimAction {
             # that takes an action as an input and outputs a state.
             source SterilisationSimulator
             reward PasteurReward
-          #Define the Trainingsetup
+          #Define the Training setup
           training 
           {
                 # Give the brain 20 minutes to get the pasteurization going.
@@ -465,6 +498,8 @@ graph (input: SimState): SimAction {
                     _initialConditions: "ReactorStartup.icf",
                     _timeStep: 2,  # VP Link model takes 2 second time steps (for the PIDs to work well)...
                     _reportEvery: 30,  # but reports to Bonsai after 30 seconds of sim time has elapsed. 
+                    # the below variables are added as domain randomsation to overwrite the conditions 
+                    # specified for those variables in the icf file
                     LvlFermenter: number<300.0 .. 500.0>,
                     Reactor_O2: number<16.5 .. 18.5>,
                     Reactor_Temp: number<96.0 .. 98.0>,
@@ -489,10 +524,12 @@ graph (input: SimState): SimAction {
           lesson GoodStart {
               scenario {
                   _configNumber: 0,
-                # Each episode will use the same starting conditions
+                  # Each episode will use the same starting conditions
                   _initialConditions: "Continuous.icf",
                   _timeStep: 2,  # VP Link model takes 2 second time steps (for the PIDs to work well)...
                   _reportEvery: 30,  # but reports to Bonsai after 30 seconds of sim time has elapsed.
+                  # the below variables are added as domain randomsation to overwrite the conditions 
+                  # specified for those variables in the icf file
                   LvlFermenter: number<1100.0 .. 1250.0>,
                   Reactor_O2: number<16.5 .. 18.5>,
                   Reactor_Temp: number<96.5 .. 99.5>,
@@ -504,6 +541,9 @@ graph (input: SimState): SimAction {
         }
   }  
 
+  #This concept does two things
+  # 1. it combines the output from all the concepts into one set of actions that can be sent to the simulator
+  # 2. it selects which of the reactor specific actions (either continuous or reactor startup) to use
     concept CombineActions (input,  Continuous, ReactorStartup, SterilisationStartup) : SimAction{
         programmed    function (state: SimState,  c: ContinuousAction, r: ReactorStartupAction, Pt: SterilisationAction) { 
                 if state.Reactor_Startup_Mode == 1 {

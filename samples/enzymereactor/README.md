@@ -12,12 +12,27 @@ other process measurements including the production rate of enzymes.
 The process is illustrated below.  The challenge is to build a brain that maintains the pastuerization of the feed as well as the optimum 
 concentration of microbes in the reactor for maximum production. Within this problem there are effectively three 'phases' of the reactor
 control that need treated differently, pasteurisation startup, reactor startup and continuous enzyme production.
-Use the supplied [VP Link loadable](enzymereactor_sim.zip) to create your Bonsai Simulator.
-Read the supplied [process description](EnzymeReactorExplanation.pdf) for more information about how the process works.
 
+Read the supplied [process description](EnzymeReactorExplanation.pdf) for more information about how the process works.
 
 The image below shows the enzyme reactor working at close to optimial conditions.
 ![Enzyme Reactor Optimal](enzymereactor.png)
+
+## Creating a simulator package
+Use the supplied [VP Link loadable](enzymereactor_sim.zip) to create your Bonsai Simulator.  
+To do this, open https://preview.bons.ai/ in the web browser and open your workspace. To add the simulator, click the Add sim button located on the left
+pane. Select VP Link as the process simulator, drag and drop the QuadTank_sim.zip and type in the name to the simulator (check for duplicate names).
+Click on Create simulator; a simulator to train the Bonsai brain will be created in the workspace. Once the simulator is created, user needs to select the
+simulator, click on Create Brain button and and type in the name of the brain (check for duplicate names). An untrained brain will be created. User needs
+to copy paste the code from inkling file [inkling file](EnzymeReactor_Sample.ink), update the simulator name in the inkling code and train the brain.    
+You must ensure that the package name given (e.g. "EnzymeReactor")is correctly reflected in the package statement in the inkling file
+```inkling
+simulator Simulator(action: SimAction, config: SimConfig): SimState {
+    # Automatically launch the simulator with this
+    # registered package name.
+    package "EnzymeReactor"
+}
+```
 
 ## State Tags
 * Continuous_Mode -- Continuous Mode status
@@ -48,7 +63,29 @@ The image below shows the enzyme reactor working at close to optimial conditions
 * PastLoop_TempSetpoint -- Setpoint of Steam Heater Temperature Controller
 * Air_Blower-Speed -- Air flow into reactor 
 
-
+## SimConfig
+* _configNumber: number
+* _initialConditions: string
+* _timeStep: number
+* _reportEvery: number
+* Enzyme_Prod_Rate: number<0.0 .. 100.0>
+* LvlFermenter: number<0.0 .. 2000.0>
+* Continuous_Mode: number<0 .. 1>
+* Past_Startup_Mode: number<0 .. 1>
+* Reactor_Startup_Mode: number<0 .. 1>
+* Continuous_Mode_Button: number<0 .. 1>
+* Past_Startup_Mode_Button: number<0 .. 1>
+* Reactor_Startup_Mode_Button: number<0 .. 1>
+* Microbes: number<0.0 .. 5000.0>
+* Food: number<0.0 .. 2000.0>
+* Reactor_O2: number<0.0 .. 50.0>
+* Reactor_Temp: number<0.0 .. 212.0>
+* Reactor_pH: number<0.0 .. 14.0>
+* Temp_E002_FoodIn: number<0.0 .. 300.0>
+* Temp_E003_FoodIn: number<0.0 .. 300.0>
+* Temp_PastLoop_In: number<0.0 .. 300.0>
+* Temp_PastLoop_OUT: number<0.0 .. 300.0>
+* Temp_ReactorFood_In: number<0.0 .. 300.0>
 
 ## Initial Conditions Files
 * PasteurizationStartup.icf -- The pasteurization loop is at 90 degrees, no flow to the reactor, so all the flow is recycling to the feed tank.
