@@ -53,14 +53,14 @@ The image below shows the enzyme reactor working at close to optimial conditions
 ## Initial Conditions Files
 * PasteurizationStartup.icf -- The pasteurization loop is at 90 degrees, no flow to the reactor, so all the flow is recycling to the feed tank.
 Start here to train a brain to get the pasteurization loop up to a stable 170 - 175 degrees throughout, as fast as possible.
-![Pasteurization Startup screenshot](Enzymereactor_PasteurizationStartup.png)
+![Pasteurization Startup screenshot](Enzymereactor_PasteurizationStartup.PNG)
 * ReactorStartup.icf -- The pasteurization loop is stable at 175 degrees.  There is no flow to the reactor.  The reactor has 400 l in it, there
 is 400 kg of food.  The reactor has just been innoculated with 10 kg of microbes.  Start here to train a brain to build a population of microbes 
 in the reactor .
-![Reactor Startup screenshot](Enzymereactor_ReactorStartup.png)
+![Reactor Startup screenshot](Enzymereactor_ReactorStartup.PNG)
 * Continuous.icf -- The reactor is continuously producing enzymes and reactor conditions are in a good state. Start here to train a brain 
 to continue producing enzymes while maintaining good reactor conditions for microbe growth
-![Continuous screenshot](Enzymereactor_Continuous.png)
+![Continuous screenshot](Enzymereactor_Continuous.PNG)
 
 * PasteurisationRampinFlow.icf -- A flow disturbance for the pastuerisation loop to deal with
 * PasteurisationRampdown.icf -- Another flow disturbance for the pastuerisation loop to deal with
@@ -71,7 +71,7 @@ to continue producing enzymes while maintaining good reactor conditions for micr
 
 
 
-# Learning with the Sample1 inkling
+# Learning with the Enzyme Reactor Sample inkling
 The EnzymeReactor_Sample1.ink file is a place to start to train a brain on a part of this process. The Sample is an example of a multi-concept
 brain that uses different concepts and rewards for different phases of the reactor control.  Create a simulator using the
 VP Link simulator and the sample loadable file in this directory.  If you are not sure how to do this, go back and run through the
