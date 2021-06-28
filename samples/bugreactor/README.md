@@ -1,7 +1,6 @@
 # Bug Reactor VP Link model
 
-> A viable Bonsai brain design suitable for a "sample" has not been completed for this simulation at this time.
-However, you can use the BugReactor_Sample1.ink as a starting point.
+> The BugReactor project is being renamed to EnzymeReactor.  Updates will be maintained in the (../samples/enymereactor) folder.
 
 The Bug Reactor model demonstrates various control loops that need to work in a coordinated fashion.  This is a model of an industrial
 bioreactor used to produce enzymes.  The enzymes are produced by laboratory organisms grown in a continuous fermenter.  There are
