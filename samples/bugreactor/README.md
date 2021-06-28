@@ -1,6 +1,6 @@
 # Bug Reactor VP Link model
 
-> The BugReactor project is being renamed to EnzymeReactor.  Updates will be maintained in the [](../samples/enzymereactor) folder.
+> The BugReactor project is being renamed to EnzymeReactor.  Updates will be maintained in the [enzymereactor](../samples/enzymereactor) folder.
 
 The Bug Reactor model demonstrates various control loops that need to work in a coordinated fashion.  This is a model of an industrial
 bioreactor used to produce enzymes.  The enzymes are produced by laboratory organisms grown in a continuous fermenter.  There are
