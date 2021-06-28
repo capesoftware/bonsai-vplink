@@ -1,3 +1,20 @@
+###
+
+# Quad Tank Tutorial
+
+# The Quand Tank model is simulated in the process simulator VP Link which is developed by Wood Plc.
+
+# This example demonstrates how to teach a policy for controlling liquid levels in two tanks by 
+# varrying the speed of two pumps supplying liquid to each of the tank. However, the two level 
+# controllers interact with each other because some of fluid pumped by each pump flows to the
+# other tank. The flow going to the other tank is further delayed in time by passing through the
+# third and fourth tanks.
+
+# To understand this Inkling better, please refer the detailled explanation of the problem statement:
+#
+
+###
+
 inkling "2.0"
 using Math
 using Number
@@ -13,20 +30,26 @@ const TankVolumeToPercent = TankVolume/100
 # Define a type that represents the per-iteration state
 # returned by the simulator.
 type SimState {
-    # VP Link analog tag (0.0,8835.73), Level Tag at press =14.7; lfngen:\otherusers\Winston\QuadTank\QuadTank.xlsx[LFNStd]
+    # Volume of Tank1 in cm3. The trem [2] defined below signified that last three historized
+    # values will be used in the exponential function to train the brain.
     Tank1Volume: number<0.0 .. 8835.73>[2],
-    # VP Link analog tag (0.0,8835.73), Level Tag at press =14.7; lfngen:\otherusers\Winston\QuadTank\QuadTank.xlsx[LFNStd]
+    # Volume of Tank2 in cm3. The trem [2] defined below signified that last three historized
+    # values will be used in the exponential function to train the brain.
     Tank2Volume: number<0.0 .. 8835.73>[2],
-    # VP Link analog tag (0.0,8835.73), Level Tag at press =14.7; lfngen:\otherusers\Winston\QuadTank\QuadTank.xlsx[LFNStd]
+    # Volume of Tank3 in cm3
     Tank3Volume: number<0.0 .. 8835.73>,
-    # VP Link analog tag (0.0,8835.73), EU=cm3; Level Tag at press =14.7; lfngen:\otherusers\Winston\QuadTank\QuadTank.xlsx[LFNStd]
+    # Volume of Tank4 in cm3
     Tank4Volume: number<0.0 .. 8835.73>,
-    # VP Link analog tag (0.0,100.0), EU=%; Target setpoint for Tank 1
-    Tank1_SP: number<0.0 .. 100>,
-    # VP Link analog tag (0.0,100.0), EU=%; Target setpoint for Tank 1
-    Tank2_SP: number<0.0 .. 100>,
-    Gamma1: number<0.0 .. 100>,
-    Gamma2: number<0.0 .. 100>,
+    # Set Point to Tank1 Level Controller in %
+    Tank1_SP: number<0.0 .. 100.0>,
+    # Set Point to Tank2 Level Controller in %
+    Tank2_SP: number<0.0 .. 100.0>,
+    # Valve Opening of valve Gamma1 in %
+    Gamma1: number<0.0 .. 100.0>,
+    # Valve Opening of valve Gamma2 in %. This value is calculated as GammaSum - Gamma1
+    Gamma2: number<0.0 .. 100.0>,
+    # Sum of the percentages of Gamma1 and Gamma2 (note max is 200)
+    GammaSum: number<0.0 .. 200.0>,
 }
 
 type SimAction {
@@ -37,7 +60,7 @@ type SimAction {
 }
 
 type SimConfig {
-    # VP Link configuration (deprecated)
+    # VP Link configuration (deprecated); Built from CreateBonsaiInterface v0.9.1
     _configNumber: number,
     # Name of VP Link .icf file to load at start of episode. Available files are ['QuadTank_v4.icf', 'QuadTank_v5.icf']
     _initialConditions: string,
@@ -45,46 +68,53 @@ type SimConfig {
     _timeStep: number,
     # Bonsai timestep (secs)
     _reportEvery: number,
-    # VP Link analog tag (0.0,8835.73), Level Tag at press =14.7; lfngen:\otherusers\Winston\QuadTank\QuadTank.xlsx[LFNStd]
-    Tank1Volume: number<0.0 .. TankVolume>,
-    # VP Link analog tag (0.0,8835.73), Level Tag at press =14.7; lfngen:\otherusers\Winston\QuadTank\QuadTank.xlsx[LFNStd]
-    Tank2Volume: number<0.0 .. TankVolume>,
-    # VP Link analog tag (0.0,8835.73), Level Tag at press =14.7; lfngen:\otherusers\Winston\QuadTank\QuadTank.xlsx[LFNStd]
-    Tank3Volume: number<0.0 .. TankVolume>,
-    # VP Link analog tag (0.0,8835.73), EU=cm3; Level Tag at press =14.7; lfngen:\otherusers\Winston\QuadTank\QuadTank.xlsx[LFNStd]
-    Tank4Volume: number<0.0 .. TankVolume>,
-    # VP Link analog tag (0.0,100.0), EU=%; Target setpoint for Tank 1
+    #  Volume of Tank1 in cm3
+    Tank1Volume: number<0.0 .. 8835.73>,
+    #  Volume of Tank2 in cm3
+    Tank2Volume: number<0.0 .. 8835.73>,
+    #  Volume of Tank3 in cm3
+    Tank3Volume: number<0.0 .. 8835.73>,
+    #  Volume of Tank4 in cm3
+    Tank4Volume: number<0.0 .. 8835.73>,
+    # Set Point to Tank1 Level Controller in %
     Tank1_SP: number<0.0 .. 100.0>,
-    # VP Link analog tag (0.0,100.0), EU=%; Target setpoint for Tank 1
+    # Set Point to Tank2 Level Controller in %
     Tank2_SP: number<0.0 .. 100.0>,
-    GammaSum: number <0.0 .. 200>,
+    # Valve Opening of valve Gamma1 in %
     Gamma1: number<0.0 .. 100.0>,
+    # Valve Opening of valve Gamma2 in %. This value is calculated as GammaSum - Gamma1
     Gamma2: number<0.0 .. 100.0>,
+    # Sum of the percentages of Gamma1 and Gamma2 (note max is 200)
+    GammaSum: number<0.0 .. 200.0>,
 }
 
 # Make an Observable SimState a little smaller
 type ObservableState {
-    # VP Link analog tag (0.0,8835.73), Level Tag at press =14.7; lfngen:\otherusers\Winston\QuadTank\QuadTank.xlsx[LFNStd]
-    Tank1Volume: number<0.0 .. TankVolume>[2],
-    # VP Link analog tag (0.0,8835.73), Level Tag at press =14.7; lfngen:\otherusers\Winston\QuadTank\QuadTank.xlsx[LFNStd]
-    Tank2Volume: number<0.0 .. TankVolume>[2],
-    # VP Link analog tag (0.0,8835.73), Level Tag at press =14.7; lfngen:\otherusers\Winston\QuadTank\QuadTank.xlsx[LFNStd]
-    Tank3Volume: number<0.0 .. TankVolume>,
-    # VP Link analog tag (0.0,8835.73), EU=cm3; Level Tag at press =14.7; lfngen:\otherusers\Winston\QuadTank\QuadTank.xlsx[LFNStd]
-    Tank4Volume: number<0.0 .. TankVolume>,
-    # VP Link analog tag (0.0,100.0), EU=%; Target setpoint for Tank 1
-    Tank1_SP: number<0.0 .. 100>,
-    # VP Link analog tag (0.0,100.0), EU=%; Target setpoint for Tank 1
-    Tank2_SP: number<0.0 .. 100>,
-    # Gamma1: number,
-    # Gamma2: number,
+  # Volume of Tank1 in cm3. The trem [2] defined below signified that last three historized
+    # values will be used in the exponential function to train the brain.
+    Tank1Volume: number<0.0 .. 8835.73>[2],
+    # Volume of Tank2 in cm3. The trem [2] defined below signified that last three historized
+    # values will be used in the exponential function to train the brain.
+    Tank2Volume: number<0.0 .. 8835.73>[2],
+    # Volume of Tank3 in cm3
+    Tank3Volume: number<0.0 .. 8835.73>,
+    # Volume of Tank4 in cm3
+    Tank4Volume: number<0.0 .. 8835.73>,
+    # Set Point to Tank1 Level Controller in %
+    Tank1_SP: number<0.0 .. 100.0>,
+    # Set Point to Tank2 Level Controller in %
+    Tank2_SP: number<0.0 .. 100.0>,
+       # Valve Opening of valve Gamma1 in %
+       # Gamma1: number,
+       # Valve Opening of valve Gamma2 in %. This value is calculated as GammaSum - Gamma1
+       # Gamma2: number, 
 }
 
 simulator Simulator(action: SimAction, config: SimConfig): SimState {
     # Automatically launch the simulator with this registered package name.
     # Comment out to manually pick an unregsitered simulator
     #   Useful for testing....
-    package "<YourSimHere>"   # TODO: use your Brain name here
+    package "ST_QuadTank_Sim"
 }
 
 function DistanceReward( s: SimState)
@@ -133,8 +163,8 @@ function NormalizeState(s: SimState) : ObservableState
         Tank4Volume: s.Tank4Volume,
         Tank1_SP: s.Tank1_SP,
         Tank2_SP: s.Tank2_SP,
-        # Gamma1: s.Gamma1,
-        # Gamma2: s.Gamma2,
+        #Gamma1: s.Gamma1,
+        #Gamma2: s.Gamma2,
     }
 }
 # Define a concept graph
@@ -298,7 +328,7 @@ function NormalizeState(s: SimState) : ObservableState
                     Tank1_SP:    number <10..80 step 1>,  # BRAIN needs to see all sorts of target setpoints...
                     Tank2_SP:    number <10..80 step 1>,  # ...in both tanks.
                     GammaSum: number <40 .. 99>,
-                    Gamma1: number <20 .. 50>,  # WDJHUH Note that 0.5 - 0.7 leads to a weird situation, which is just Gamma2 = 0
+                    Gamma1: number <20 .. 50>,  # Note that 0.5 - 0.7 leads to a weird situation, which is just Gamma2 = 0
                     # Gamma2: 0.4,
                 }
             }

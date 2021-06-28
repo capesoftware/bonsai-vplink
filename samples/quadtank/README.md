@@ -13,12 +13,12 @@ and very worthy of an acedemic exercise.
 
 The process is illustrated below.  Your mission, should you choose to accept it, is to build a brain
 that controls the level in the two tanks to their setpoints for various level setpoints and values of Gamma1 and Gamma2.
-Use the supplied [VP Link loadable](quadtank_sim.zip) to create your Bonsai Simulator.
+Use the supplied [VP Link loadable](Quadtank_sim.zip) to create your Bonsai Simulator.
 Read the supplied [process description](QuadTankExplanation.pdf) for more information about how the process works and how this model was built with VP Link.
 
 Hint: You might not want to train the brain to cover the entire state space at once.
 
-![](quadtank.png)
+![](QuadTank.png)
 
 ## State Tags
 * Tank1Volume[2] -- cm3 of fluid in Tank #1. This is an array with \[0\] being the current value and \[1\] the value from the previous time step.
@@ -37,30 +37,34 @@ Hint: You might not want to train the brain to cover the entire state space at o
 
 ## How to get started
 
-If you just want to get started with the Quad Tank, create a simulator from the quadtank_sim.zip and use the included QuadTankSimple.ink file to
-train a brain.  This example is a simple brain design (one concept) and will train a brain to handle the case where Gamma1 = Gamma2 = 75%.
+If you just want to get started with the Quad Tank, create a simulator from the QuadTank_sim.zip and use the included QuadTank.ink file to train a brain.
+To do this, open https://preview.bons.ai/ in the web browser and open your workspace. To add the simulator, click the Add sim button located on the left
+pane. Select VP Link as the process simulator, drag and drop the QuadTank_sim.zip and type in the name to the simulator (check for duplicate names).
+Click on Create simulator; a simulator to train the Bonsai brain will be created in the workspace. Once the simulator is created, user needs to select the
+simulator, click on Create Brain button and and type in the name of the brain (check for duplicate names). An untrained brain will be created. User needs
+to copy paste the code from inkling file (QuadTank.ink), update the simulator name in the inkling code and train the brain.    
+This example is a brain design with a single concept reward function and will train a brain to handle the case where Gamma1 = Gamma2 = 75%.
 
-If you use the QuadTankSimple.ink inkling file, you may get results like this.  ![](QuadTankSimple_BrainTraining.png)
+If you use the QuadTank.ink inkling file, you may get results like this.  ![](QuadTank_BrainTraining.png)
 
-Once you get a trained brain, you might want to test that brain with other Gamma values to see how well it does at conditions other than
-what it was trained against.
+Once you get a trained brain, you might want to test that brain with other Gamma values to see how well it does at conditions other than what it was trained
+against.
 
 
 ### Using initial conditions files
 
-Note in the QuadTank examples, the SimState includes three tags that are related to the Gamma values.  Gamma1 and Gamma2 control the percent
-of the flow that goes from a pump to its corresponding tank.  You can change the value of these tags at the start of an episode by using the Gamma1
-and Gamma2 members of the SimConfig structure.
+Note in the QuadTank examples, the SimState includes three tags that are related to the Gamma values.  There is also a GammaSum tag.  This is the sum of the 
+Gamma1 and Gamma2 tags.Gamma1 and Gamma2 control the percent of the flow that goes from a pump to its corresponding tank.  You can change the value of these 
+tags at the start of an episode by using the Gamma1 and GammaSum members of the SimConfig structure.
 
-There is also a GammaSum tag.  This is the sum of the Gamma1 and Gamma2 tags.  Obviously the SimState is now over-specified--if you have the Gamma1 and
-the Gamma2 tags, you do not need the GammaSum.  However, because of the math involved, it is useful to specify the sum of the Gamma values along with
-one of the values.  This keeps the brain from exploring sections of the state space that should not be combined in a single lesson.
+Due to the math involved, it is useful to specify the sum of the Gamma values along with value of Gamma1.
+This keeps the brain from exploring sections of the state space that should not be combined in a single lesson.
 
 The two \_initialConditions that are supplied are "QuadTank\_v4.icf" and "QuadTank\_v5.icf" \(see the comment in the SimConfig structure\).
-These two strings are the name of a VP Link initial conditions file which was supplied in the loadable,
-and is used to set the values of a set of tags.  It is a simple text file, but unlike the rest of the members of the SimConfig, you can also set
-the VP Link mode (Auto or Manual) of the tag from the .icf file.  The QuadTank\_v4.icf sets up the simulation to use the Gamma1 and Gamma2 from the SimConfig, and
-the QuadTank\_v5.icf sets up the simulation to use the GammaSum and the Gamma1 members of the SimConfig.
+These two strings are the name of a VP Link initial conditions file which was supplied in the loadable, and is used to set the values of a set of tags.
+It is a simple text file, but unlike the rest of the members of the SimConfig, you can also set the VP Link mode (Auto or Manual) of the tag from the
+.icf file.  The QuadTank\_v4.icf sets up the simulation to use the Gamma1 and Gamma2 from the SimConfig, and the QuadTank\_v5.icf sets up the simulation
+to use the GammaSum and the Gamma1 members of the SimConfig.
 
 ## A more complex brain
 
@@ -77,4 +81,3 @@ See the following for other articles on the Quad Tank problem:
 * ![Digital State Space Control](https://digitalcommons.uri.edu/cgi/viewcontent.cgi?article=1318&context=theses)
 * ![Comparison of Disturbance Rejection](https://core.ac.uk/download/pdf/86591307.pdf)
 * ![Controlling Quadruple Tanks](https://www.youtube.com/watch?v=_s0vkkykE1k)
-
