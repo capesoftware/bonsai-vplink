@@ -116,6 +116,25 @@
 <p>Instructs the program to emit additional progress information. This can be specified multiple times to increase the verbosity of the program. New in version 1.9.1, the logging level of the underlying simulator module is now changed by the --progress option. Without any --progress, the default log level is WARNING. With a single --progress, the log level is INFO. With two or more --progress options, the log level is DEBUG.</p>
 
 </dd>
+<dt id="defaults"><b>--defaults</b></dt>
+<dd>
+
+<p>Prints the values of the command line options to stderr and quits. Here is an example.</p>
+
+<pre><code><code>  C:\&gt;VPLinkSim_bonsai3.exe --deployed --depurl http://10.0.0.152:5000/v1 --defaults
+  #  --vpserver &quot;&quot;
+  #    the --progress option was not specified
+  #  --timestep 1.0
+  #  --reportevery 1.0
+  #  --deployed
+  #  --depurl http://10.0.0.152:5000/v1
+  #  --swarm &quot;&quot;
+  #  --workspace &quot;&quot;
+  #  --accesskey &quot;&quot;
+  #  --simname &quot;VPLink3c&quot;
+  #  --jsondir &quot;./&quot;</code></code></pre>
+
+</dd>
 <dt id="nowork"><b>--nowork</b></dt>
 <dd>
 
@@ -217,7 +236,12 @@
 <dt id="allversion"><b>--allversion</b></dt>
 <dd>
 
-<p>Prints the version of the program and dependent modules, then exits.</p>
+<p>Prints the version of the program and key dependent modules, then exits. Looks like this:</p>
+
+<pre><code><code>  C:\&gt;VPLinkSim_bonsai3.exe --allv
+  VPLinkSim_Bonsai3 1.9.4
+  vpbonsai.vplinksim 1.1.1
+  vp 0.7.4</code></code></pre>
 
 </dd>
 </dl>
@@ -273,6 +297,10 @@
 <p>19-Jul-2021 WDJ v1.9.1 Location reverted to origina api.json, and vplinsim module logging now controlled by --progress options.</p>
 
 <p>19-Jul-2021 WDJ v1.9.2 Changed default deployed url from https:// to http://.</p>
+
+<p>19-Jul-2021 WDJ v1.9.3 Added compatibility with new brains that describe their function in /swagger.json</p>
+
+<p>19-Jul-2021 WDJ v1.9.4 Added --defaults option to show current values of command line options. Further improvements to output and error messsages while deployed.</p>
 
 <h1 id="TODO">TODO</h1>
 
