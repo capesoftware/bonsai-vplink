@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title></title>
+<title>VPLinkSim_bonsai3</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rev="made" href="mailto:" />
 </head>
@@ -10,7 +10,7 @@
 <body style="background-color: white">
 <table border="0" width="100%" cellspacing="0" cellpadding="3">
 <tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
-<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+<big><strong><span class="_podblock_">&nbsp;VPLinkSim_bonsai3</span></strong></big>
 </td></tr>
 </table>
 
@@ -21,9 +21,8 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a>
     <ul>
-      <li><a href="#VP-Link-Swarm-integration">VP Link Swarm integration</a></li>
-      <li><a href="#Use-while-training-a-brain">Use while training a brain</a></li>
       <li><a href="#Use-with-a-deployed-brain">Use with a deployed brain</a></li>
+      <li><a href="#VP-Link-Swarm-integration">VP Link Swarm integration</a></li>
     </ul>
   </li>
   <li><a href="#OPTIONS">OPTIONS</a></li>
@@ -79,15 +78,15 @@
 </dd>
 </dl>
 
+<h2 id="Use-with-a-deployed-brain">Use with a deployed brain</h2>
+
+<p>When communicating with a deployed brain using the http: endpoint, the program will automatically interrgate the endpoint to determine the required State from the endpoint. Therefore no JSON file is necessary, and the --jsondir option is ignored.</p>
+
+<p>In addition to the VP Link required to support the State and Action strutures of the deployed brain, this interface program can also set VP Link tags called &quot;BonsaiControls&lt;ActionTagname&gt;&quot;.. These VP Link tags are optional (but you will get lots of warnings about them if they do not exist), and are set by the interface program to indiciate the status of a successful prediction from the brain. The VP Link tags are expected to be DIG or DIGOUT tags and are set to their high state if a successful prediction was received from the brain. If a successful prediction was not received by the brain, these tags are set to their low state.</p>
+
 <h2 id="VP-Link-Swarm-integration">VP Link Swarm integration</h2>
 
 <p>Normally when this program is run, it connects to a single VP Link server and creates a single unmanaged simulator in the bonsai web interface. The VP Swarm is a set of VP Link servers all running the same VP Link simualation model, and addressed as a unit by the swarm name. This allows the VPLinkSim_Bonsai3 program to connect to the VP Link swarm, creating an unmanaged simulator for each VP Link server that is part of the swarm. All the simulators created in this fashion will have the same simulator name in the bonsai web interface--this is what allows bonsai to connet to all of them in parallel to speed up training. When building the unmanaged simulators for each VP Link server in the VP Swarm, use the --swarm SWARMNAME option instead of the --vpserver VPSERVER option.</p>
-
-<h2 id="Use-while-training-a-brain">Use while training a brain</h2>
-
-<h2 id="Use-with-a-deployed-brain">Use with a deployed brain</h2>
-
-<p>When communicating with a deployed brain using the http: endpoint, the program will automatically interrgate the endpoint to determine the required State from the endpoint. When started with no command given on the command line, the program will print some simple help.</p>
 
 <h1 id="OPTIONS">OPTIONS</h1>
 
@@ -114,7 +113,7 @@
 <dt id="progress"><b>--progress</b></dt>
 <dd>
 
-<p>Instructs the program to emit additional progress information. This can be specified multiple times to increase the verbosity of the program.</p>
+<p>Instructs the program to emit additional progress information. This can be specified multiple times to increase the verbosity of the program. New in version 1.9.1, the logging level of the underlying simulator module is now changed by the --progress option. Without any --progress, the default log level is WARNING. With a single --progress, the log level is INFO. With two or more --progress options, the log level is DEBUG.</p>
 
 </dd>
 <dt id="nowork"><b>--nowork</b></dt>
@@ -138,7 +137,7 @@
 <dt id="deployed"><b>--deployed</b></dt>
 <dd>
 
-<p>Indicates that the program is to talk to a deployed brain. You may also want to use the --depurl to set the location of the deployed brain.</p>
+<p>Indicates that the program is to talk to a deployed brain. You may also want to use the --depurl to set the location of the deployed brain if the default is not suitable. Note that in v1.0, the --workspace and --accesskey options are no longer required when --deployed is active.</p>
 
 </dd>
 <dt id="depurl-DEPURL"><b>--depurl DEPURL</b></dt>
@@ -156,19 +155,19 @@
 <dt id="simname-SIMNAME"><b>--simname SIMNAME</b></dt>
 <dd>
 
-<p>Sets the name of the unmanaged simulator in the bonsai web page.</p>
+<p>Sets the name of the unmanaged simulator in the bonsai web page. Default is VPLink3c.</p>
 
 </dd>
 <dt id="jsondir-JSONDIR"><b>--jsondir JSONDIR</b></dt>
 <dd>
 
-<p>Sets the location of the vplink_interface.json file. This is used by the VP Link GUI to locate the vplink_iterface.json that was most recently created in the &quot;loadable/Loadable&quot; directory. The default value is the current directory.</p>
+<p>Sets the location of the vplink_interface.json file. This is used by the VP Link GUI to locate the vplink_iterface.json that was most recently created in the &quot;loadable/Loadable&quot; directory. The default value is the current directory. This is not necessary when --deployed is given.</p>
 
 </dd>
 <dt id="holdatexit"><b>--holdatexit</b></dt>
 <dd>
 
-<p>Used to aid in debugging. When this option is given, the program will hold with a &quot;Hit return to end program&quot; prompt. This enables you to observe the program&#39;s output before it dissappears.</p>
+<p>Used to aid in debugging. When this option is given, the program will hold with a &quot;Hit return to end program&quot; prompt. This enables you to observe the program&#39;s output before it dissappears. You probably do not want to do this.</p>
 
 </dd>
 <dt id="help"><b>--help</b></dt>
@@ -178,7 +177,7 @@
 
 <pre><code><code> usage: VPLinkSim_bonsai3.py [-h] [--vpserver VPSERVER] [--progress] [--nowork] [--timestep TIMESTEP] [--reportevery REPORTEVERY] [--deployed]
                              [--depurl DEPURL] [--swarm SWARM] [--workspace WORKSPACE] [--accesskey ACCESSKEY] [--simname SIMNAME] [--holdatexit]
-                             [--jsondir JSONDIR] [--version] [--allversion]
+                             [--jsondir JSONDIR] [--version] [--allversion] [--autocreate]
 
  optional arguments:
    -h, --help            show this help message and exit
@@ -199,7 +198,8 @@
    --holdatexit          waits for a &lt;return&gt; before finally exiting
    --jsondir JSONDIR     Specifies root dir for vplink_interface.json, ./cfg/, ./sces/
    --version, -v         prints the version
-   --allversion          prints all the versions</code></code></pre>
+   --allversion          prints all the versions
+   --autocreate          automatically creates needed Bonsai status tags</code></code></pre>
 
 </dd>
 <dt id="progress1"><b>--progress</b></dt>
@@ -254,13 +254,25 @@
 
 <p>26-Jan-2021 WDJ v1.7 Added quotes around the filename in the child command lines. And now worked with bundled .EXE</p>
 
-<p>16-Feb-2021 WDJ v1.7.1 Now workes with bundled .EXE</p>
+<p>16-Feb-2021 WDJ v1.7.1 Now works with bundled .EXE</p>
 
 <p>16-Feb-2021 WDJ v1.7.2 Added --holdatexit option</p>
 
 <p>17-Feb-2021 WDJ v1.8 Added --jsondir option to facilitate running locally from VP Link interface.</p>
 
 <p>02-Mar-2021 WDJ v1.8.1 Minor changes for formatting</p>
+
+<p>15-Apr-2021 WDJ v1.8.2 Changed default sim name to VPLink3c to reflect update v0.9.19 to the vplinksim module</p>
+
+<p>26-May-2021 WDJ v1.8.3 Fixed bug with --deployed option giving bad initial values in the State</p>
+
+<p>26-May-2021 WDJ v1.9 No longer need --workspace, --accesskey or --jsondir with --deployed option.</p>
+
+<p>08-Jul-2021 WDJ v1.9.1rc1 Change location of deployed api description from api.json to swagger.json</p>
+
+<p>19-Jul-2021 WDJ v1.9.1 Location reverted to origina api.json, and vplinsim module logging now controlled by --progress options.</p>
+
+<p>19-Jul-2021 WDJ v1.9.2 Changed default deployed url from https:// to http://.</p>
 
 <h1 id="TODO">TODO</h1>
 
@@ -277,7 +289,7 @@
 
 <table border="0" width="100%" cellspacing="0" cellpadding="3">
 <tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
-<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+<big><strong><span class="_podblock_">&nbsp;VPLinkSim_bonsai3</span></strong></big>
 </td></tr>
 </table>
 
