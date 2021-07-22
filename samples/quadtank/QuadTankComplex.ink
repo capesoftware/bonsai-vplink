@@ -17,29 +17,24 @@
 
 inkling "2.0"
 using Math
-using Number
 using Goal
+using Number
 
-const PIDThreshold = 5
+const TankVolumePercent = 100
 
-const LowSPThreshold = 25
-const HighSPThreshold = 25
-const TankVolume = 8835.73
-const TankVolumeToPercent = TankVolume/100
-
-# Define a type that represents the per-iteration state
+## Define a type that represents the per-iteration state
 # returned by the simulator.
 type SimState {
-    # Volume of Tank1 in cm3. The trem [2] defined below signified that last three historized
+    # Volume of Tank1 in %. The trem [4] defined below signified that last four historized
     # values will be used in the exponential function to train the brain.
-    Tank1Volume: number<0.0 .. 8835.73>[2],
-    # Volume of Tank2 in cm3. The trem [2] defined below signified that last three historized
+    Tank1_PV: number<0.0 .. 100.00>[4],
+    # Volume of Tank2 in %. The trem [4] defined below signified that last four historized
     # values will be used in the exponential function to train the brain.
-    Tank2Volume: number<0.0 .. 8835.73>[2],
-    # Volume of Tank3 in cm3
-    Tank3Volume: number<0.0 .. 8835.73>,
-    # Volume of Tank4 in cm3
-    Tank4Volume: number<0.0 .. 8835.73>,
+    Tank2_PV: number<0.0 .. 100.00>[4],
+    # Volume of Tank3 in %
+    Tank3_PV: number<0.0 .. 100.00>,
+    # Volume of Tank4 in %
+    Tank4_PV: number<0.0 .. 100.00>,
     # Set Point to Tank1 Level Controller in %
     Tank1_SP: number<0.0 .. 100.0>,
     # Set Point to Tank2 Level Controller in %
@@ -53,9 +48,9 @@ type SimState {
 }
 
 type SimAction {
-    # VP Link analog tag (0.0,100.0), EU=%; Percentage of maximum speed of pump #1
+    # Speed of Pump1 in % (Percent of max speed)
     Pump1Speed: number<0.0 .. 100.0>,
-    # VP Link analog tag (0.0,100.0), EU=%; Percentage of maximum speed of pump #2
+    # Speed of Pump2 in % (Percent of max speed)
     Pump2Speed: number<0.0 .. 100.0>,
 }
 
@@ -68,14 +63,14 @@ type SimConfig {
     _timeStep: number,
     # Bonsai timestep (secs)
     _reportEvery: number,
-    #  Volume of Tank1 in cm3
-    Tank1Volume: number<0.0 .. 8835.73>,
-    #  Volume of Tank2 in cm3
-    Tank2Volume: number<0.0 .. 8835.73>,
-    #  Volume of Tank3 in cm3
-    Tank3Volume: number<0.0 .. 8835.73>,
-    #  Volume of Tank4 in cm3
-    Tank4Volume: number<0.0 .. 8835.73>,
+    #  Volume of Tank1 in %
+    Tank1_PV: number<0.0 .. 100.00>,
+    #  Volume of Tank2 in %
+    Tank2_PV: number<0.0 .. 100.00>,
+    #  Volume of Tank3 in %
+    Tank3_PV: number<0.0 .. 100.00>,
+    #  Volume of Tank4 in %
+    Tank4_PV: number<0.0 .. 100.00>,
     # Set Point to Tank1 Level Controller in %
     Tank1_SP: number<0.0 .. 100.0>,
     # Set Point to Tank2 Level Controller in %
@@ -90,32 +85,38 @@ type SimConfig {
 
 # Make an Observable SimState a little smaller
 type ObservableState {
-  # Volume of Tank1 in cm3. The trem [2] defined below signified that last three historized
+    # Volume of Tank1 in %. The trem [4] defined below signified that last four historized
     # values will be used in the exponential function to train the brain.
-    Tank1Volume: number<0.0 .. 8835.73>[2],
-    # Volume of Tank2 in cm3. The trem [2] defined below signified that last three historized
+    Tank1_PV: number<0.0 .. 100.00>[4],
+    # Volume of Tank2 in %. The trem [4] defined below signified that last four historized
     # values will be used in the exponential function to train the brain.
-    Tank2Volume: number<0.0 .. 8835.73>[2],
-    # Volume of Tank3 in cm3
-    Tank3Volume: number<0.0 .. 8835.73>,
-    # Volume of Tank4 in cm3
-    Tank4Volume: number<0.0 .. 8835.73>,
+    Tank2_PV: number<0.0 .. 100.00>[4],
+    # Volume of Tank3 in %
+    Tank3_PV: number<0.0 .. 100.00>,
+    # Volume of Tank4 in %
+    Tank4_PV: number<0.0 .. 100.00>,
     # Set Point to Tank1 Level Controller in %
     Tank1_SP: number<0.0 .. 100.0>,
     # Set Point to Tank2 Level Controller in %
     Tank2_SP: number<0.0 .. 100.0>,
-       # Valve Opening of valve Gamma1 in %
-       # Gamma1: number,
-       # Valve Opening of valve Gamma2 in %. This value is calculated as GammaSum - Gamma1
-       # Gamma2: number, 
-}
+    # Valve Opening of valve Gamma1 in %
+    #Gamma1: number<0.0 .. 100.0>,
+    # Valve Opening of valve Gamma2 in %. This value is calculated as GammaSum - Gamma1
+    #Gamma2: number<0.0 .. 100.0>,
+    # Sum of the percentages of Gamma1 and Gamma2 (note max is 200)
+    #GammaSum: number<0.0 .. 200.0>, 
+  }
 
 simulator Simulator(action: SimAction, config: SimConfig): SimState {
-    # Automatically launch the simulator with this registered package name.
-    # Comment out to manually pick an unregsitered simulator
-    #   Useful for testing....
-    package "ST_QuadTank_Sim"
+    # Automatically launch the simulator with this
+    # registered package name.
+    package "ST_QTRev2"
 }
+
+# An Exponential Reward Function with landing zone is being used to train the Bonsai Brain.
+# The reward gained by the brain will exponentially ,if the brain is able to maintain the
+# difference between Level Controller setpoint and the actual level (process variable = PV)
+# in the tanks to a minimum value (ideal value of difference = 0).
 
 function DistanceReward( s: SimState)
 {
@@ -127,8 +128,8 @@ function DistanceReward( s: SimState)
     var tank2PrecisionReward: number
     var halfdiff: number  = 5
     var precisionRewardFactor = 2
-    tank1Error = Math.Abs(s.Tank1_SP-s.Tank1Volume[0])
-    tank2Error = Math.Abs(s.Tank2_SP-s.Tank2Volume[0])
+    tank1Error = Math.Abs(s.Tank1_SP-s.Tank1_PV[0])
+    tank2Error = Math.Abs(s.Tank2_SP-s.Tank2_PV[0])
     tank1Reward = Math.E**(-((tank1Error/halfdiff)**2))
     tank2Reward = Math.E**(-((tank2Error/halfdiff)**2))
     tank1PrecisionReward = 0
@@ -147,8 +148,8 @@ function DistanceReward( s: SimState)
 function LinearReward(s: SimState)
 {
     var Normalizer = 25
-    var tank1Error = Math.Abs(s.Tank1_SP-s.Tank1Volume[0])
-    var tank2Error = Math.Abs(s.Tank2_SP-s.Tank2Volume[0])
+    var tank1Error = Math.Abs(s.Tank1_SP-s.Tank1_PV[0])
+    var tank2Error = Math.Abs(s.Tank2_SP-s.Tank2_PV[0])
     return (Normalizer -tank1Error - tank2Error)/Normalizer
 }
 
@@ -157,10 +158,10 @@ function NormalizeState(s: SimState) : ObservableState
     # NOTE: Gamma1 and Gamma2 are NOT returned in this structure
     #  because sending extraneous inputs to the brain is wasteful.
     return {
-        Tank1Volume: s.Tank1Volume,
-        Tank2Volume: s.Tank2Volume,
-        Tank3Volume: s.Tank3Volume,
-        Tank4Volume: s.Tank4Volume,
+        Tank1_PV: s.Tank1_PV,
+        Tank2_PV: s.Tank2_PV,
+        Tank3_PV: s.Tank3_PV,
+        Tank4_PV: s.Tank4_PV,
         Tank1_SP: s.Tank1_SP,
         Tank2_SP: s.Tank2_SP,
         #Gamma1: s.Gamma1,
@@ -185,8 +186,8 @@ function NormalizeState(s: SimState) : ObservableState
 
              goal (s: SimState)
 			 {
-                drive LevelSP1: s.Tank1Volume[0]/TankVolumeToPercent in Goal.Sphere(s.Tank1_SP, 0.5)
-			 	drive LevelSP2: s.Tank2Volume[0]/TankVolumeToPercent in Goal.Sphere(s.Tank2_SP, 0.5)
+                drive LevelSP1: s.Tank1_PV[0] in Goal.Sphere(s.Tank1_SP, 0.5)
+			 	drive LevelSP2: s.Tank2_PV[0] in Goal.Sphere(s.Tank2_SP, 0.5)
 			 	# avoid Overflow: s.Tank1Volume[0] in Goal.RangeAbove(TankVolume)
 			 	# avoid TankEmpty: s.Tank1Volume[0] in Goal.RangeBelow(5)
 			}
@@ -210,10 +211,10 @@ function NormalizeState(s: SimState) : ObservableState
 					_initialConditions: "QuadTank_v5.icf",
 					_timeStep: 10,
 					_reportEvery: 30,
-          Tank1Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # BRAIN needs to see all sorts of starting levels...
-          Tank2Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # ...in both tanks.
-          Tank3Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # BRAIN needs to see all sorts of starting levels...
-          Tank4Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # ...in these tanks, too.
+                    Tank1_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # BRAIN needs to see all sorts of starting levels...
+	                Tank2_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # ...in both tanks.
+	                Tank3_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # BRAIN needs to see all sorts of starting levels...
+	                Tank4_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # ...in these tanks, too.
           Tank1_SP:    number <10..80 step 1>,  # BRAIN needs to see all sorts of target setpoints...
           Tank2_SP:    number <10..80 step 1>,  # ...in both tanks.
           GammaSum: 140,
@@ -232,10 +233,10 @@ function NormalizeState(s: SimState) : ObservableState
 					_initialConditions: "QuadTank_v5.icf",
 					_timeStep: 10,
 					_reportEvery: 30,
-                    Tank1Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # BRAIN needs to see all sorts of starting levels...
-                    Tank2Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # ...in both tanks.
-                    Tank3Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # BRAIN needs to see all sorts of starting levels...
-                    Tank4Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # ...in these tanks, too.
+                    Tank1_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # BRAIN needs to see all sorts of starting levels...
+	                Tank2_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # ...in both tanks.
+	                Tank3_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # BRAIN needs to see all sorts of starting levels...
+	                Tank4_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # ...in these tanks, too.
                     Tank1_SP:    number <10..80 step 1>,  # BRAIN needs to see all sorts of target setpoints...
                     Tank2_SP:    number <10..80 step 1>,  # ...in both tanks.
                     GammaSum: number <110 .. 160>,
@@ -255,8 +256,8 @@ function NormalizeState(s: SimState) : ObservableState
 
              goal (s: SimState)
 			 {
-                drive LevelSP1: s.Tank1Volume[0]/TankVolumeToPercent in Goal.Sphere(s.Tank1_SP, 0.5)
-			 	drive LevelSP2: s.Tank2Volume[0]/TankVolumeToPercent in Goal.Sphere(s.Tank2_SP, 0.5)
+                drive LevelSP1: s.Tank1_PV[0] in Goal.Sphere(s.Tank1_SP, 0.5)
+			 	drive LevelSP2: s.Tank2_PV[0] in Goal.Sphere(s.Tank2_SP, 0.5)
 			 	# avoid Overflow: s.Tank1Volume[0] in Goal.RangeAbove(100)
 			 	# avoid TankEmpty: s.Tank1Volume[0] in Goal.RangeBelow(5)
 			 }
@@ -279,10 +280,10 @@ function NormalizeState(s: SimState) : ObservableState
 					_initialConditions: "QuadTank_v5.icf",
 					_timeStep: 10,
 					_reportEvery: 30,
-                    Tank1Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # BRAIN needs to see all sorts of starting levels...
-                    Tank2Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # ...in both tanks.
-                    Tank3Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # BRAIN needs to see all sorts of starting levels...
-                    Tank4Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # ...in these tanks, too.
+                    Tank1_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # BRAIN needs to see all sorts of starting levels...
+	                Tank2_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # ...in both tanks.
+	                Tank3_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # BRAIN needs to see all sorts of starting levels...
+	                Tank4_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # ...in these tanks, too.
                     Tank1_SP:    number <10..80 step 1>,  # BRAIN needs to see all sorts of target setpoints...
                     Tank2_SP:    number <10..80 step 1>,  # ...in both tanks.
                     GammaSum: number <60 .. 70>,
@@ -300,10 +301,10 @@ function NormalizeState(s: SimState) : ObservableState
 					_initialConditions: "QuadTank_v5.icf",
 					_timeStep: 10,
 					_reportEvery: 30,
-                    Tank1Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # BRAIN needs to see all sorts of starting levels...
-                    Tank2Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # ...in both tanks.
-                    Tank3Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # BRAIN needs to see all sorts of starting levels...
-                    Tank4Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # ...in these tanks, too.
+                    Tank1_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # BRAIN needs to see all sorts of starting levels...
+	                Tank2_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # ...in both tanks.
+	                Tank3_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # BRAIN needs to see all sorts of starting levels...
+	                Tank4_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # ...in these tanks, too.
                     Tank1_SP:    number <10..80 step 1>,  # BRAIN needs to see all sorts of target setpoints...
                     Tank2_SP:    number <10..80 step 1>,  # ...in both tanks.
                     GammaSum: number <60 .. 99>,
@@ -321,10 +322,10 @@ function NormalizeState(s: SimState) : ObservableState
 					_initialConditions: "QuadTank_v5.icf",
 					_timeStep: 10,
 					_reportEvery: 30,
-                    Tank1Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # BRAIN needs to see all sorts of starting levels...
-                    Tank2Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # ...in both tanks.
-                    Tank3Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # BRAIN needs to see all sorts of starting levels...
-                    Tank4Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # ...in these tanks, too.
+                    Tank1_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # BRAIN needs to see all sorts of starting levels...
+	                Tank2_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # ...in both tanks.
+	                Tank3_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # BRAIN needs to see all sorts of starting levels...
+	                Tank4_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # ...in these tanks, too.
                     Tank1_SP:    number <10..80 step 1>,  # BRAIN needs to see all sorts of target setpoints...
                     Tank2_SP:    number <10..80 step 1>,  # ...in both tanks.
                     GammaSum: number <40 .. 99>,
@@ -349,4 +350,3 @@ function NormalizeState(s: SimState) : ObservableState
         }
     }
 }
-

@@ -21,10 +21,10 @@ Hint: You might not want to train the brain to cover the entire state space at o
 ![](QuadTank.png)
 
 ## State Tags
-* Tank1Volume[2] -- cm3 of fluid in Tank #1. This is an array with \[0\] being the current value and \[1\] the value from the previous time step.
-* Tank2Volume[2] -- cm3 of fluid in Tank #2. This is an array with \[0\] being the current value and \[1\] the value from the previous time step.
-* Tank3Volume -- cm3 of fluid in Tank #3.
-* Tank4Volume -- cm3 of fluid in Tank #4.
+* Tank1_PV[4] -- % of fluid in Tank #1. This is an array with \[0\] being the current value and \[1\]\[2\]\[3\] are the value from the previous time steps.
+* Tank2_PV[4] -- % of fluid in Tank #2. This is an array with \[0\] being the current value and \[1\]\[2\]\[3\] are the value from the previous time steps.
+* Tank3_PV -- % of fluid in Tank #3.
+* Tank4_PV -- % of fluid in Tank #4.
 * Tank1_SP -- Target setpoint for level in Tank #1. Units are in percent!
 * Tank2_SP -- Target setpoint for level in Tank #2. Units are in percent!
 * GammaSum: -- Sum of the Gamma tags.

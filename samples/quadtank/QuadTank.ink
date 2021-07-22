@@ -17,25 +17,22 @@
 
 inkling "2.0"
 using Math
-using Goal
-using Number
 
-const TankVolume = 8835.73
-const TankVolumeToPercent = TankVolume/100
+const TankVolumePercent = 100
 
 ## Define a type that represents the per-iteration state
 # returned by the simulator.
 type SimState {
-    # Volume of Tank1 in cm3. The trem [2] defined below signified that last three historized
+    # Volume of Tank1 in %. The trem [4] defined below signified that last four historized
     # values will be used in the exponential function to train the brain.
-    Tank1Volume: number<0.0 .. 8835.73>[2],
-    # Volume of Tank2 in cm3. The trem [2] defined below signified that last three historized
+    Tank1_PV: number<0.0 .. 100.00>[4],
+    # Volume of Tank2 in %. The trem [4] defined below signified that last four historized
     # values will be used in the exponential function to train the brain.
-    Tank2Volume: number<0.0 .. 8835.73>[2],
-    # Volume of Tank3 in cm3
-    Tank3Volume: number<0.0 .. 8835.73>,
-    # Volume of Tank4 in cm3
-    Tank4Volume: number<0.0 .. 8835.73>,
+    Tank2_PV: number<0.0 .. 100.00>[4],
+    # Volume of Tank3 in %
+    Tank3_PV: number<0.0 .. 100.00>,
+    # Volume of Tank4 in %
+    Tank4_PV: number<0.0 .. 100.00>,
     # Set Point to Tank1 Level Controller in %
     Tank1_SP: number<0.0 .. 100.0>,
     # Set Point to Tank2 Level Controller in %
@@ -64,14 +61,14 @@ type SimConfig {
     _timeStep: number,
     # Bonsai timestep (secs)
     _reportEvery: number,
-    #  Volume of Tank1 in cm3
-    Tank1Volume: number<0.0 .. 8835.73>,
-    #  Volume of Tank2 in cm3
-    Tank2Volume: number<0.0 .. 8835.73>,
-    #  Volume of Tank3 in cm3
-    Tank3Volume: number<0.0 .. 8835.73>,
-    #  Volume of Tank4 in cm3
-    Tank4Volume: number<0.0 .. 8835.73>,
+    #  Volume of Tank1 in %
+    Tank1_PV: number<0.0 .. 100.00>,
+    #  Volume of Tank2 in %
+    Tank2_PV: number<0.0 .. 100.00>,
+    #  Volume of Tank3 in %
+    Tank3_PV: number<0.0 .. 100.00>,
+    #  Volume of Tank4 in %
+    Tank4_PV: number<0.0 .. 100.00>,
     # Set Point to Tank1 Level Controller in %
     Tank1_SP: number<0.0 .. 100.0>,
     # Set Point to Tank2 Level Controller in %
@@ -87,7 +84,7 @@ type SimConfig {
 simulator Simulator(action: SimAction, config: SimConfig): SimState {
     # Automatically launch the simulator with this
     # registered package name.
-    package "<YourSimHere>" # TODO: use your Brain name here
+    package "ST_QTRev2"
 }
 
 # An Exponential Reward Function with landing zone is being used to train the Bonsai Brain.
@@ -104,8 +101,8 @@ function RewardFunction( s: SimState)
     var Tank2error: number 
     var Tank1diff: number 
     var Tank2diff: number 
-    Tank1diff=Math.Abs(s.Tank1Volume[0]/TankVolumeToPercent) - s.Tank1_SP
-    Tank2diff=Math.Abs(s.Tank2Volume[0]/TankVolumeToPercent) - s.Tank2_SP
+    Tank1diff=s.Tank1_PV[0] - s.Tank1_SP
+    Tank2diff=s.Tank2_PV[0] - s.Tank2_SP
     adjFactor=15
     # Exponential reward function
     Tank1error=Math.Abs((Tank1diff/adjFactor)**2)
@@ -147,10 +144,10 @@ graph (input: SimState): SimAction {
 					_initialConditions: "",
 					_timeStep: 10,
 					_reportEvery: 30,
-                    Tank1Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # BRAIN needs to see all sorts of starting levels...
-	                Tank2Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # ...in both tanks.
-	                Tank3Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # BRAIN needs to see all sorts of starting levels...
-	                Tank4Volume: number <0.1*TankVolume..0.9*TankVolume step 0.02*TankVolume>,  # ...in these tanks, too.
+                    Tank1_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # BRAIN needs to see all sorts of starting levels...
+	                Tank2_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # ...in both tanks.
+	                Tank3_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # BRAIN needs to see all sorts of starting levels...
+	                Tank4_PV: number <0.1*TankVolumePercent..0.9*TankVolumePercent step 0.02*TankVolumePercent>,  # ...in these tanks, too.
 	                Tank1_SP:    number <10..80 step 1>,  # BRAIN needs to see all sorts of target setpoints...
 	                Tank2_SP:    number <10..80 step 1>,  # ...in both tanks.
 	                GammaSum: 150,
@@ -160,6 +157,3 @@ graph (input: SimState): SimAction {
         }
     }
 }
-
-            
-        
