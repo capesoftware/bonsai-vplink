@@ -41,8 +41,10 @@ simulator Simulator(action: SimAction, config: SimConfig): SimState {
 * Continuous_Mode_Button -- Button to engage Continuous Mode 
 * Reactor_Startup_Mode_Button -- Button to engage Reactor Starup Mode 
 * Microbes -- Total amount of Microbes in the Reactor 
-* Food -- Total Amount of Food in the Reactor 
+* Food -- Total Amount of Food in the Reactor
+* Acid Flow -- Flow of Acid into Reactor 
 * Reactor_O2 -- Reactor Dissolved Oxygen % 
+* Base Flow -- Flow of Base into the Reactor
 * Reactor_Temp -- Reactor Temperature 
 * Reactor_pH -- pH in Reactor
 * Temp_E002_FoodIn -- Temperature of food inlet to Steam Heater 
@@ -77,8 +79,10 @@ simulator Simulator(action: SimAction, config: SimConfig): SimState {
 * Past_Startup_Mode_Button: number<0 .. 1>
 * Reactor_Startup_Mode_Button: number<0 .. 1>
 * Microbes: number<0.0 .. 5000.0>
+* Acid_Flow: number<0.0 .. 10.0>,
 * Food: number<0.0 .. 2000.0>
 * Reactor_O2: number<0.0 .. 50.0>
+* Base_Flow: number<0.0 .. 10.0>,
 * Reactor_Temp: number<0.0 .. 212.0>
 * Reactor_pH: number<0.0 .. 14.0>
 * Temp_E002_FoodIn: number<0.0 .. 300.0>
@@ -99,8 +103,6 @@ in the reactor .
 to continue producing enzymes while maintaining good reactor conditions for microbe growth
 ![Continuous screenshot](enzymereactor_continuous.png)
 
-* PasteurisationRampinFlow.icf -- A flow disturbance for the pastuerisation loop to deal with
-* PasteurisationRampdown.icf -- Another flow disturbance for the pastuerisation loop to deal with
 
 ## Things to consider
 * How long should a brain training episode be in simulated time?
@@ -154,7 +156,7 @@ You will notice that different simulator packages need to be specified in order 
 simulator ContinuousSimulator(action: ContinuousAction, config: SimConfig): SimState {
     # Automatically launch the simulator with this
     # registered package name.
-    package "EnzymeReactorFinal"
+    package "EnzymeReactor"
 }
 
 ```
@@ -209,19 +211,19 @@ an initial conditions file is still utilised however variables also specified in
 start of each episode. Domain randomisation makes the brain more robust for real world deployment. 
 
 ```inkling
- lesson MoreVariedStart {
+            lesson GoodStart {
                 scenario {
                     _configNumber: 0,
                   # Each episode will use the same starting conditions
                     _initialConditions: "ReactorStartup.icf",
                     _timeStep: 2,  # VP Link model takes 2 second time steps (for the PIDs to work well)...
                     _reportEvery: 30,  # but reports to Bonsai after 30 seconds of sim time has elapsed. 
-                    LvlFermenter: number<300.0 .. 600.0>,
-                    Reactor_Startup_Mode: number<1>,
-                    Reactor_O2: number<15.0 .. 20.0>,
-                    Reactor_Temp: number<94.0 .. 102.0>,
-                    Reactor_pH: number<7.2 .. 7.8>,
-         
+                    # the below variables are added as domain randomsation to overwrite the conditions 
+                    # specified for those variables in the icf file
+                    LvlFermenter: number<300.0 .. 500.0>,
+                    Reactor_O2: number<16.5 .. 18.5>,
+                    Reactor_Temp: number<96.0 .. 98.0>,
+                    Reactor_pH: number<7.0 .. 7.5>,
                 }
             }
 ```
@@ -231,7 +233,7 @@ start of each episode. Domain randomisation makes the brain more robust for real
 
 This is a classic way to improve brain training performance.  Since the SimState includes all sorts of variables that do not pertain to the pasteurization step,
 it is advantageous to remove these from the state that is passed to the Sterilize concept.  You can do this with a programmed concept.  The programmed concept will
-take the large SimState and return a new state, called PasteurizeState.  This new state will only have the variables necessary for the SterilisationStartup concept to do its job.
+take the large SimState and return a new state.  This new state will only have the variables necessary for the relevant concept to do its job.
 
 ```inkling
 #define the narrowed state space for Pastuerisation

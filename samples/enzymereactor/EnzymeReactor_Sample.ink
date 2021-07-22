@@ -35,9 +35,12 @@ type SimState {
     Microbes: number<0.0 .. 5000.0>,
     # VP Link analog tag (0.0,2000.0), EU=kg; The amount of food in the reactor
     Food: number<0.0 .. 2000.0>,
+    # VP Link analog tag (0.0,10.0), EU=l/min; Rate of Acid addition
+    Acid_Flow: number<0.0 .. 10.0>,
     # VP Link analog tag (0.0,50.0), EU=%; What is the dissolved Oxygen concentration? Target is 17.5%
     Reactor_O2: number<0.0 .. 50.0>[3],
-    # VP Link analog tag (0.0,212.0), EU=degF; What is Temperature of the reactor
+    # VP Link analog tag (0.0,10.0), 
+    Base_Flow: number<0.0 .. 10.0>,
     Reactor_Temp: number<0.0 .. 212.0>[3],
     # VP Link analog tag (0.0,14.0), EU=pH; What is pH of the reactor
     Reactor_pH: number<0.0 .. 14.0>[3],
@@ -105,8 +108,12 @@ type SimConfig {
     Microbes: number<0.0 .. 5000.0>,
     # VP Link analog tag (0.0,2000.0), EU=kg; The amount of food in the reactor
     Food: number<0.0 .. 2000.0>,
+    # VP Link analog tag (0.0,10.0), EU=l/min; Rate of Acid addition
+    Acid_Flow: number<0.0 .. 10.0>,
     # VP Link analog tag (0.0,50.0), EU=%; What is the dissolved Oxygen concentration? Target is 17.5%
     Reactor_O2: number<0.0 .. 50.0>,
+    # VP Link analog tag (0.0,10.0), 
+    Base_Flow: number<0.0 .. 10.0>,
     # VP Link analog tag (0.0,212.0), EU=degF; What is Temperature of the reactor
     Reactor_Temp: number<0.0 .. 212.0>,
     # VP Link analog tag (0.0,14.0), EU=pH; What is pH of the reactor
@@ -191,8 +198,12 @@ type ReactorStartupState {
     Microbes: number<0.0 .. 5000.0>,
     # VP Link analog tag (0.0,2000.0), EU=kg; The amount of food in the reactor
     Food: number<0.0 .. 2000.0>,
+    # VP Link analog tag (0.0,10.0), EU=l/min; Rate of Acid addition
+    Acid_Flow: number<0.0 .. 10.0>,
     # VP Link analog tag (0.0,50.0), EU=%; What is the dissolved Oxygen concentration? Target is 17.5%
     Reactor_O2: number<0.0 .. 50.0>[3],
+    # VP Link analog tag (0.0,10.0), 
+    Base_Flow: number<0.0 .. 10.0>,
     # VP Link analog tag (0.0,212.0), EU=degF; What is Temperature of the reactor
     Reactor_Temp: number<0.0 .. 212.0>[3],
     # VP Link analog tag (0.0,14.0), EU=pH; What is pH of the reactor
@@ -208,7 +219,9 @@ function ReduceReactStartState(s: SimState) : ReactorStartupState
     Reactor_Startup_Mode: s.Reactor_Startup_Mode,
     Microbes: s.Microbes,
     Food: s.Food,
+    Acid_Flow: s.Acid_Flow,
     Reactor_O2: s.Reactor_O2,
+    Base_Flow: s.Base_Flow,
     Reactor_Temp: s.Reactor_Temp,
     Reactor_pH: s.Reactor_pH,
     Temp_ReactorFood_In: s.Temp_ReactorFood_In,
@@ -226,8 +239,12 @@ type ContinuousState {
     Microbes: number<0.0 .. 5000.0>,
     # VP Link analog tag (0.0,2000.0), EU=kg; The amount of food in the reactor
     Food: number<0.0 .. 2000.0>,
+    # VP Link analog tag (0.0,10.0), EU=l/min; Rate of Acid addition
+    Acid_Flow: number<0.0 .. 10.0>,
     # VP Link analog tag (0.0,50.0), EU=%; What is the dissolved Oxygen concentration? Target is 17.5%
     Reactor_O2: number<0.0 .. 50.0>[3],
+    # VP Link analog tag (0.0,10.0), 
+    Base_Flow: number<0.0 .. 10.0>,
     # VP Link analog tag (0.0,212.0), EU=degF; What is Temperature of the reactor
     Reactor_Temp: number<0.0 .. 212.0>[3],
     # VP Link analog tag (0.0,14.0), EU=pH; What is pH of the reactor
@@ -245,7 +262,9 @@ function ReduceContinuousState(s: SimState) : ContinuousState
     Continuous_Mode: s.Continuous_Mode,
     Microbes: s.Microbes,
     Food: s.Food,
+    Acid_Flow: s.Acid_Flow,
     Reactor_O2: s.Reactor_O2,
+    Base_Flow: s.Base_Flow,
     Reactor_Temp: s.Reactor_Temp,
     Reactor_pH: s.Reactor_pH,
     Temp_ReactorFood_In: s.Temp_ReactorFood_In,
@@ -256,32 +275,33 @@ function ReduceContinuousState(s: SimState) : ContinuousState
 simulator Simulator(action: SimAction, config: SimConfig): SimState {
     # Automatically launch the simulator with this
     # registered package name.
-    package "EnzymeReactorFinal"
+    package "EnzymeReactorFinal_v2"
 }
 
 #Define simulator that uses the narrowed action space Pasteurisation
 simulator SterilisationSimulator(action: SterilisationAction, config: SimConfig): SimState {
     # Automatically launch the simulator with this
     # registered package name.
-    package "EnzymeReactorFinal"
+    package "EnzymeReactorFinal_v2"
 }
 
 #Define simulator that uses the narrowed action space for Reactor Startup
 simulator ReactorStartupSimulator(action: ReactorStartupAction, config: SimConfig): SimState {
     # Automatically launch the simulator with this
     # registered package name.
-    package "EnzymeReactorFinal"
+    package "EnzymeReactorFinal_v2"
 }
 
 #Define simulator that uses the narrowed action space for Continuous
 simulator ContinuousSimulator(action: ContinuousAction, config: SimConfig): SimState {
     # Automatically launch the simulator with this
     # registered package name.
-    package "EnzymeReactorFinal"
+    package "EnzymeReactorFinal_v2"
 }
 
 #define a constant to use in the Pasteurisation function
 const kTooHot = 180.0
+const kTooCold = 169.0
 
 #Pasteurisaiton reward function
 function VPLinkReward(target: number, currentValue: number, radius: number)
@@ -340,7 +360,8 @@ function StartupReactorReward( s: SimState)
     pHTarget = 7.5
 #pH mathematical function. This will create a distribution around the target value that varies from 0 to 1
 #The idea is bonsai will aim to maintain this process variable as close to 1 as it can
-    pHreward = Math.E**(-(Math.Abs(s.Reactor_pH[0]-pHTarget)/pHhalf)*pHExponent)
+#adding a component related to the base valve opening will prevent bonsai from overusing expensive acid and base chemicals
+    pHreward = (Math.E**(-(Math.Abs(s.Reactor_pH[0]-pHTarget)/pHhalf)*pHExponent))*(1-s.Base_Flow/20)
 #Temperature variables    
     var temphalf: number
     var tempExponent: number
@@ -384,8 +405,10 @@ function ContinuousReward (s: SimState)
     pHhalf = 0.5
     pHExponent = 2
     pHTarget = 7.5
-    #pH function
-    pHreward = Math.E**(-(Math.Abs(s.Reactor_pH[0]-pHTarget)/pHhalf)*pHExponent)
+    #pH function. This factors in Base flow. The idea is that the reward will be reduced if too much
+    #base is used. This encourages Bonsai to learn an equilibrium where less acid and base 
+    #chemicals are used
+    pHreward = Math.E**(-(Math.Abs(s.Reactor_pH[0]-pHTarget)/pHhalf)*pHExponent)*(1-s.Base_Flow/20)
     #Temperature variables    
     var temphalf: number
     var tempExponent: number
@@ -456,7 +479,7 @@ graph (input: SimState): SimAction {
                 # Give the brain 20 minutes to get the pasteurization going.
                 # That is 40 '_reportEvery' increments
                 EpisodeIterationLimit: 60, # Brain has 60 "_reportEvery" time steps to make this work
-                NoProgressIterationLimit : 500000 
+                NoProgressIterationLimit : 550000 
           }
           #Define the Lessons
           #could we do more lessons other than just startup? Flow fluctuations
@@ -465,11 +488,42 @@ graph (input: SimState): SimAction {
             {
               _configNumber: 0,
               # Each episode will use the same starting conditions
-              #_initialConditions: "ReactorStartup.icf",
               _timeStep: 2,  # VP Link model takes 2 second time steps (for the PIDs to work well)...
               _reportEvery: 30,  # but reports to Bonsai after 30 seconds of sim time has elapsed.
               # We do not need to set any other values, because they are all set in the initialConditions file, above
               _initialConditions: "PasteurizationStartup.icf"
+              
+            }
+          }
+          #This teaches Bonsai to deal with the flow fluctuations arising during Reactor Startup
+          lesson ReactorStartup {
+            scenario 
+            {
+              _configNumber: 0,
+              # Each episode will use the same starting conditions
+              _timeStep: 2,  # VP Link model takes 2 second time steps (for the PIDs to work well)...
+              _reportEvery: 30,  # but reports to Bonsai after 30 seconds of sim time has elapsed.
+              #define initial conditions
+              _initialConditions: "ReactorStartup.icf",
+              # Add some variability in the inlet and outlet temperatures
+              Temp_PastLoop_In: number<162 .. 178>,
+              Temp_PastLoop_OUT: number<162 .. 178>,
+              
+            }
+          }
+          #This teaches Bonsai to deal with the flow fluctuations arising out of Continuous mode
+          lesson Continuous {
+            scenario 
+            {
+              _configNumber: 0,
+              # Each episode will use the same starting conditions
+              _timeStep: 2,  # VP Link model takes 2 second time steps (for the PIDs to work well)...
+              _reportEvery: 30,  # but reports to Bonsai after 30 seconds of sim time has elapsed.
+              # Define initial conditions
+              _initialConditions: "Continuous.icf",
+              # Add some variability in the inlet and outlet temperatures
+              Temp_PastLoop_In: number<160 .. 180>,
+              Temp_PastLoop_OUT: number<160 .. 180>,
               
             }
           }
@@ -489,7 +543,7 @@ graph (input: SimState): SimAction {
             training {
 
                     EpisodeIterationLimit: 160, # Brain has this many "_reportEvery" time steps to make this work
-                    NoProgressIterationLimit : 1000000 
+                    NoProgressIterationLimit : 2100000 
             }
             lesson GoodStart {
                 scenario {
@@ -519,7 +573,7 @@ graph (input: SimState): SimAction {
           training {
 
                   EpisodeIterationLimit: 120, # Brain has this many "_reportEvery" time steps to make this work
-                  NoProgressIterationLimit : 1500000 
+                  NoProgressIterationLimit : 1800000 
           }
           lesson GoodStart {
               scenario {
@@ -544,6 +598,7 @@ graph (input: SimState): SimAction {
   #This concept does two things
   # 1. it combines the output from all the concepts into one set of actions that can be sent to the simulator
   # 2. it selects which of the reactor specific actions (either continuous or reactor startup) to use
+  # It is necessary to have this concept as there is only one possible output concept 
     concept CombineActions (input,  Continuous, ReactorStartup, SterilisationStartup) : SimAction{
         programmed    function (state: SimState,  c: ContinuousAction, r: ReactorStartupAction, Pt: SterilisationAction) { 
                 if state.Reactor_Startup_Mode == 1 {
