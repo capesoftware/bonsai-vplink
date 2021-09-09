@@ -1,3 +1,4 @@
 
 samples/simpletank/loadable/Rev1/vplink_interface.json
 samples/simpletank/vpswarm.conf
+tools/Makefile
