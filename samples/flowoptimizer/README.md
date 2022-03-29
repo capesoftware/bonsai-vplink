@@ -72,16 +72,15 @@ is again the stream number from 01 to 12.  This unit value tag is multiplied by 
 ## How to get started
 
 If you just want to get started with the Quad Tank, create a simulator from the [VP Link loadable](FlowOptimizer_sim.zip) and 
-use the included FlowOptimization.ink file to train a brain.
+use the included [FlowOptimization.ink](FlowOptimization.ink) file to train a brain.
 To do this, open https://preview.bons.ai/ in the web browser and open your workspace. To add the simulator, click the Add sim button located on the left
 pane. Select VP Link as the process simulator, drag and drop the FlowOptimization_sim.zip and type in the name to the simulator (check for duplicate names).
 Click on Create simulator; a simulator to train the Bonsai brain will be created in the workspace. Once the simulator is created, user needs to select the
 simulator, click on Create Brain button and and type in the name of the brain (check for duplicate names). An untrained brain will be created. User needs
 to copy paste the code from inkling file (FlowOptimization.ink), update the simulator name in the inkling code and train the brain.    
 
-<!--
-If you use the FlowOptimization.ink inkling file, you may get results like this.  ![](FlowOptimization_BrainTraining.png)
--->
+
+If you use the FlowOptimizer.ink inkling file, you may get results like this.  ![](FlowOptimization_BrainTraining.png)
 
 Once you get a trained brain, you might want to test that brain with other values of the valve position function coefficients to see 
 how well it does at conditions other than what it was trained against.
