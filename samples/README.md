@@ -18,6 +18,7 @@ Choose one of the following samples
 * [Simple Tank](simpletank/README.md) -- a great way to get started with Bonsai
 * [Quad Tank](quadtank/README.md) -- a more complicated control problem
 * [Enzyme Bug Reactor](bugreactor/README.md) -- simulation based on a real-world problem with deadtime and unmeasurable process variables.
+* [General Optimization](flowoptimizer/README.md) -- Varying complexity optimization problem.  Perfect for teaching humans how a brain learns.
 
 Each of these examples includes a VP Link loadable file that you can download and use to create a scalable simulator in the Bonsai platform.
 
