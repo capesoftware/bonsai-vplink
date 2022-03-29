@@ -133,7 +133,7 @@ You can use any of the following ICF files to adjust the behavior of the model.
 
 See the options that are available as \_initialConditions in the SimState.  The list
 of available initial conditions is listed in the comment in the definition of the SimConfig.
-![](SimConfig_InitialConditions.png)
+![](SimConfig_initialConditions.png)
 
 You select one of the initial conditions files to set the type of function you want to use
 as the transform between the brain output and the valve position.  This is done inside
