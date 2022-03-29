@@ -71,7 +71,7 @@ is again the stream number from 01 to 12.  This unit value tag is multiplied by 
 
 ## How to get started
 
-If you just want to get started with the Quad Tank, create a simulator from the FlowOptimization_sim.zip and 
+If you just want to get started with the Quad Tank, create a simulator from the [VP Link loadable](FlowOptimizer_sim.zip) and 
 use the included FlowOptimization.ink file to train a brain.
 To do this, open https://preview.bons.ai/ in the web browser and open your workspace. To add the simulator, click the Add sim button located on the left
 pane. Select VP Link as the process simulator, drag and drop the FlowOptimization_sim.zip and type in the name to the simulator (check for duplicate names).
