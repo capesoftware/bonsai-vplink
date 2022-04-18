@@ -22,7 +22,10 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a>
     <ul>
       <li><a href="#Use-with-a-deployed-brain">Use with a deployed brain</a></li>
+      <li><a href="#Anatomy-of-a-training-episode">Anatomy of a training episode</a></li>
+      <li><a href="#Use-with-a-deployed-brain1">Use with a deployed brain</a></li>
       <li><a href="#VP-Link-Swarm-integration">VP Link Swarm integration</a></li>
+      <li><a href="#Use-while-training-a-brain">Use while training a brain</a></li>
     </ul>
   </li>
   <li><a href="#OPTIONS">OPTIONS</a></li>
@@ -50,7 +53,7 @@
 
 <p>The vplink_interface.json file should be created using the CreateBonsaiInterface program which will create the file from a list of VP Link tags that were specified as action and state tags. In fact, after reading the vplink_interface.json file the program is able to describe the Config, State and Action Inkling structures to the bonsai web site. This allows the web site to build the required Inkling code automatically. The user will then insert that code into a brain.</p>
 
-<p>Once the Inkling is created, it is important not to change the vplin_interface.json file as that would leave the VPLinkSim_Bonsai3 program out of sync with the bonsai brain. If you do need to change the Config, Action or State structures, you should use the VP Link interface to change the tags in the State or Action structures and recreate the vplink_interface.json file. Start this program with that new file and allow the bonsai web site to re-create the corresponding Inkling code. You can then copy and past the generated Inkling code into your brain.</p>
+<p>Once the Inkling is created, it is important not to change the vplink_interface.json file as that would leave the VPLinkSim_Bonsai3 program out of sync with the bonsai brain. If you do need to change the Config, Action or State structures, you should use the VP Link interface to change the tags in the State or Action structures and recreate the vplink_interface.json file. Start this program with that new file and allow the bonsai web site to re-create the corresponding Inkling code. You can then copy and paste the generated Inkling code into your brain.</p>
 
 <p>When this program is run locally, the end result is an unmanaged simulator appearing in your bonsai workspace. As such, there are a number of things that need to be specified for that to work. They are:</p>
 
@@ -84,9 +87,65 @@
 
 <p>In addition to the VP Link required to support the State and Action strutures of the deployed brain, this interface program can also set VP Link tags called &quot;BonsaiControls&lt;ActionTagname&gt;&quot;.. These VP Link tags are optional (but you will get lots of warnings about them if they do not exist), and are set by the interface program to indiciate the status of a successful prediction from the brain. The VP Link tags are expected to be DIG or DIGOUT tags and are set to their high state if a successful prediction was received from the brain. If a successful prediction was not received by the brain, these tags are set to their low state.</p>
 
+<h2 id="Anatomy-of-a-training-episode">Anatomy of a training episode</h2>
+
+<p>When the interface program communicates with bonsai, certain actions occur at the start of every episode. These actions are supported by the fields in the SimState structure. There are some built-in fields that always exist, these are the ones that start with an underscore, such as _timeStep or _reportEvery. Other fields that do not start with an underscore are assumed to be VP Link tag names.</p>
+
+<p>At the start of an episode, the following actions are taken.</p>
+
+<dl>
+
+<dt id="Initial-Conditions-are-set">Initial Conditions are set</dt>
+<dd>
+
+<p>Any .icf files that are specified in the field, &quot;_initialConditions&quot;, are executed. This can be used to return the VP Link state to a known configuration. Without this, the tags will simply have the values that existed at the end of the previous episode. The _initialConditions field is a single string made up of comma-separated list of .icf files which are present in the ./cfg/ directory of the sim.zip file. These .icf files are run in the order they appear in the string. This ./cfg/ directory is relative to the directory containing the vplink_interface.json file.</p>
+
+</dd>
+<dt id="Initial-tag-values-are-set">Initial tag values are set</dt>
+<dd>
+
+<p>Any values for tags that exist as fields in the SimConfig are set to their given values. These are generally the values that bonsai will be setting to its desired initial state for the episode.</p>
+
+</dd>
+<dt id="Simulation-Time-is-reset">Simulation Time is reset</dt>
+<dd>
+
+<p>A SimReset is performed to reset the elapsed simulation time to zero. This allows SIMWAIT statements in any VP Link scenarios to be referenced to the start of the episode.</p>
+
+</dd>
+<dt id="Scenarios-are-started">Scenarios are started</dt>
+<dd>
+
+<p>Any scenarios listed in the _scenarios field will be started. Like the _initialConditions field, the _scenarios field is a comma-delimted list of scenario files in a single string. These scenario files should exist in the ./sces/ directory of the sim.zip file. If you are running the simulation locally, the ./sces/ directory is relative to the directory containing the vplink_interface.json file.</p>
+
+<p>Note that since the simulations will likely be proceeding much faster than real-time, consider substituting the SIMWAIT command for any DELAY or DELAYSECS commands in existing scenarios. The &quot;SIMWAIT secs&quot; command in a scenario will wait for the given number of simulation-time seconds (not wall clock-time seconds) to elapse before continuing. Note that it is very likely that the simulation may proceed past the target SIMWAIT time. Any difference between the actual simulation time and the target simulation time to continue the scenarios will be listed in the .TLG file.</p>
+
+</dd>
+<dt id="The-initial-SimState-is-returned-to-bonsai">The initial SimState is returned to bonsai</dt>
+<dd>
+
+<p>The values of the tags defined in the state immediately after the scenarios are started are returned as the initial state to bonsai. Note that the scenarios are started in a separate thread of execution than the main thread that builds the SimState. Therefore any values that are set in the scenario prior to a SIMWAIT statement may or may not be set in time to be captured in the initial SimState. Therefore, when attempting to set initial conditions for the episode, it is unadvisable to use a scenario as a replacement for an initial condition file.</p>
+
+</dd>
+</dl>
+
+<p>After the initial SimState is returned, the interface program waits for a new SimAction from bonsai. Once this SimAction is received, a simulation iteration occurs. During a single simulation iteration, the tags in VP Link are set from the SimAction just received, and the VP Link model is advanced through simulation time as fast as possible. The VP Link model is stepped forward in time by _timeStep increments. Once the specified _reportEvery number of seconds has been stepped, a new SimState is formed and returned to bonsai. At this point the simulation iteration is complete, and the interface program waits for a new SimAction from bonsai. These simulation iterations continue until bonsai decides the episode is complete.</p>
+
+<p>At the end of a simulation episode, any scenarios that did not finish on their own are stopped.</p>
+
+<h2 id="Use-with-a-deployed-brain1">Use with a deployed brain</h2>
+
+<p>When communicating with a deployed brain using the http: endpoint, the program will automatically interrgate the endpoint to determine the required State from the endpoint. Therefore no JSON file is necessary, and the --jsondir option is ignored.</p>
+
+<p>In addition to the VP Link required to support the State and Action strutures of the deployed brain, this interface program can also set VP Link tags called &quot;BonsaiControls&lt;ActionTagname&gt;&quot;.. These VP Link tags are optional (but you will get lots of warnings about them if they do not exist), and are set by the interface program to indiciate the status of a successful prediction from the brain. The VP Link tags are expected to be DIG or DIGOUT tags and are set to their high state if a successful prediction was received from the brain. If a successful prediction was not received by the brain, these tags are set to their low state.</p>
+
 <h2 id="VP-Link-Swarm-integration">VP Link Swarm integration</h2>
 
 <p>Normally when this program is run, it connects to a single VP Link server and creates a single unmanaged simulator in the bonsai web interface. The VP Swarm is a set of VP Link servers all running the same VP Link simualation model, and addressed as a unit by the swarm name. This allows the VPLinkSim_Bonsai3 program to connect to the VP Link swarm, creating an unmanaged simulator for each VP Link server that is part of the swarm. All the simulators created in this fashion will have the same simulator name in the bonsai web interface--this is what allows bonsai to connet to all of them in parallel to speed up training. When building the unmanaged simulators for each VP Link server in the VP Swarm, use the --swarm SWARMNAME option instead of the --vpserver VPSERVER option.</p>
+
+<h2 id="Use-while-training-a-brain">Use while training a brain</h2>
+
+<p>Prior to version 1.9.7 the SWARMNAME needed to be all lowercase with no periods. In version 1.9.7, the given swarm name is lowercased and periods are removed silently.</p>
 
 <h1 id="OPTIONS">OPTIONS</h1>
 
@@ -131,7 +190,7 @@
   #  --swarm &quot;&quot;
   #  --workspace &quot;&quot;
   #  --accesskey &quot;&quot;
-  #  --simname &quot;VPLink3c&quot;
+  #  --simname &quot;VPLink3e&quot;
   #  --jsondir &quot;./&quot;</code></code></pre>
 
 </dd>
@@ -168,13 +227,53 @@
 <dt id="swarm-SWARMNAME"><b>--swarm SWARMNAME</b></dt>
 <dd>
 
-<p>Will connect a copy of of this program to each of the VP Link servers found in the swarm with the given name. This option and the --vpserver option are mutually exclusive.</p>
+<p>Will connect a copy of of this program to each of the VP Link servers found in the swarm with the given name. This option and the --vpserver option are mutually exclusive. As of version 1.9.7, the given SWARMNAME will be lowercased and stripped of periods, thus making --swarm bonsai_%USERNAME% more likely to work on Windows.</p>
+
+</dd>
+<dt id="agentinterface-INTERFACE"><b>--agentinterface INTERFACE</b></dt>
+<dd>
+
+<p>Sets the endpoint of a VP Link companion program. INTERFACE a &lt;hostname&gt;:&lt;port&gt; style string that represents the UDP endpoint for a VP Link companion program. The companion program should support the follwing one line ASCII commands over the interface. Unless otherwise specified, the response is STATUS=1 for success, and STATUS=0 for failure. If the --agentinterface option is not given, the environment varialbe, &#39;AgentInterface&#39; is tested for the INTERFACE.</p>
+
+<ul>
+
+<li><p>$INITIALIZE;TimeStep=xx.x</p>
+
+<p>Sent when the companion program is to initialize itself. The TimeStep is the default time step (seconds) for the companion program to take. This is called the the start of an episode.</p>
+
+</li>
+<li><p>$RESET</p>
+
+<p>The companion program should reset its elapsed simulation time to zero.</p>
+
+</li>
+<li><p>$RESTORE &lt;tab&gt;1&lt;tab&gt;&lt;snapshot_name&gt;</p>
+
+<p>The companion program should restore its state to the state stored in &lt;snapshot_name&gt;. The companion program is free to define its own format and method of saving the state.</p>
+
+</li>
+<li><p>$SIMTIME</p>
+
+<p>The companion program should respond with the elapsed simulation time (seconds) in the format, SIMTIME=xx.x.</p>
+
+</li>
+<li><p>$DOASTEP;TimeStep=xx.x</p>
+
+<p>Take a time step forward of xx.x seconds</p>
+
+</li>
+<li><p>$FINALIZE</p>
+
+<p>Sent at the end of an episode. The companion program can undo anything in the $INITIALIZE step.</p>
+
+</li>
+</ul>
 
 </dd>
 <dt id="simname-SIMNAME"><b>--simname SIMNAME</b></dt>
 <dd>
 
-<p>Sets the name of the unmanaged simulator in the bonsai web page. Default is VPLink3c.</p>
+<p>Sets the name of the unmanaged simulator in the bonsai web page. Default is VPLink3e. Check the change history as the default value changes over time to reflect new features of this interface program.</p>
 
 </dd>
 <dt id="jsondir-JSONDIR"><b>--jsondir JSONDIR</b></dt>
@@ -186,7 +285,7 @@
 <dt id="holdatexit"><b>--holdatexit</b></dt>
 <dd>
 
-<p>Used to aid in debugging. When this option is given, the program will hold with a &quot;Hit return to end program&quot; prompt. This enables you to observe the program&#39;s output before it dissappears. You probably do not want to do this.</p>
+<p>Used to aid in debugging. When this option is given, the program will hold with a &quot;Hit return to end program&quot; prompt. This enables you to observe the program&#39;s output before it disappears. You probably do not want to do this.</p>
 
 </dd>
 <dt id="help"><b>--help</b></dt>
@@ -306,7 +405,13 @@
 
 <p>08-Sep-2021 WDJ v1.9.6 Incorporated some changes suggested by pylint</p>
 
-<p>20-Sep-2021 WDJ v1.9.7 Quote the executable name under Win32 when run from a bundle.</p>
+<p>20-Sep-2021 WDJ v1.9.7 Quote the executable name under Win32 when run from a bundle. Also the swarm name is now lowercased and stripped of periods.</p>
+
+<p>10-Jan-2022 WDJ v1.9.8 Fix bug where deployed sleep was hardcoded to 5.</p>
+
+<p>25-Mar-2022 WDJ v1.9.9 Make changes to also communicate with a VP Link Companion program using new DOASTEP method.</p>
+
+<p>14-Apr-2022 WDJ v1.9.10 Updated default brain SIMNAME to VPLink3e to reflect companion program comapatibility.</p>
 
 <h1 id="TODO">TODO</h1>
 
