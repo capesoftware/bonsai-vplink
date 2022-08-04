@@ -190,7 +190,7 @@
   #  --swarm &quot;&quot;
   #  --workspace &quot;&quot;
   #  --accesskey &quot;&quot;
-  #  --simname &quot;VPLink3c&quot;
+  #  --simname &quot;VPLink3e&quot;
   #  --jsondir &quot;./&quot;</code></code></pre>
 
 </dd>
@@ -230,10 +230,50 @@
 <p>Will connect a copy of of this program to each of the VP Link servers found in the swarm with the given name. This option and the --vpserver option are mutually exclusive. As of version 1.9.7, the given SWARMNAME will be lowercased and stripped of periods, thus making --swarm bonsai_%USERNAME% more likely to work on Windows.</p>
 
 </dd>
+<dt id="agentinterface-INTERFACE"><b>--agentinterface INTERFACE</b></dt>
+<dd>
+
+<p>Sets the endpoint of a VP Link companion program. INTERFACE a &lt;hostname&gt;:&lt;port&gt; style string that represents the UDP endpoint for a VP Link companion program. The companion program should support the follwing one line ASCII commands over the interface. Unless otherwise specified, the response is STATUS=1 for success, and STATUS=0 for failure. If the --agentinterface option is not given, the environment varialbe, &#39;AgentInterface&#39; is tested for the INTERFACE.</p>
+
+<ul>
+
+<li><p>$INITIALIZE;TimeStep=xx.x</p>
+
+<p>Sent when the companion program is to initialize itself. The TimeStep is the default time step (seconds) for the companion program to take. This is called the the start of an episode.</p>
+
+</li>
+<li><p>$RESET</p>
+
+<p>The companion program should reset its elapsed simulation time to zero.</p>
+
+</li>
+<li><p>$RESTORE &lt;tab&gt;1&lt;tab&gt;&lt;snapshot_name&gt;</p>
+
+<p>The companion program should restore its state to the state stored in &lt;snapshot_name&gt;. The companion program is free to define its own format and method of saving the state.</p>
+
+</li>
+<li><p>$SIMTIME</p>
+
+<p>The companion program should respond with the elapsed simulation time (seconds) in the format, SIMTIME=xx.x.</p>
+
+</li>
+<li><p>$DOASTEP;TimeStep=xx.x</p>
+
+<p>Take a time step forward of xx.x seconds</p>
+
+</li>
+<li><p>$FINALIZE</p>
+
+<p>Sent at the end of an episode. The companion program can undo anything in the $INITIALIZE step.</p>
+
+</li>
+</ul>
+
+</dd>
 <dt id="simname-SIMNAME"><b>--simname SIMNAME</b></dt>
 <dd>
 
-<p>Sets the name of the unmanaged simulator in the bonsai web page. Default is VPLink3d. Check the change history as the default value changes over time to reflect new features of this interface program.</p>
+<p>Sets the name of the unmanaged simulator in the bonsai web page. Default is VPLink3e. Check the change history as the default value changes over time to reflect new features of this interface program.</p>
 
 </dd>
 <dt id="jsondir-JSONDIR"><b>--jsondir JSONDIR</b></dt>
@@ -366,6 +406,12 @@
 <p>08-Sep-2021 WDJ v1.9.6 Incorporated some changes suggested by pylint</p>
 
 <p>20-Sep-2021 WDJ v1.9.7 Quote the executable name under Win32 when run from a bundle. Also the swarm name is now lowercased and stripped of periods.</p>
+
+<p>10-Jan-2022 WDJ v1.9.8 Fix bug where deployed sleep was hardcoded to 5.</p>
+
+<p>25-Mar-2022 WDJ v1.9.9 Make changes to also communicate with a VP Link Companion program using new DOASTEP method.</p>
+
+<p>14-Apr-2022 WDJ v1.9.10 Updated default brain SIMNAME to VPLink3e to reflect companion program comapatibility.</p>
 
 <h1 id="TODO">TODO</h1>
 
