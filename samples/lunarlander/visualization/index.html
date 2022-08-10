@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Lunar Lander Visualizer</title>
+
+  <script language="JavaScript">
+    // Javascript code for the visualizer goes here
+    // Grab any URL parameters that were provided
+    const params = new URLSearchParams(window.location.search);
+    const darkMode = params.get('_theme') === 'dark';
+    const debug = params.get("debug") === "true";
+    const testing = params.get("test") === "true";
+    let svgDoc = undefined;
+    let lander = undefined;
+    let landerXform = undefined;
+    let mainEngine = undefined;
+    let mainEngineXform = undefined;
+    let leftEngine = undefined;
+    let leftEngineXform = undefined;
+    let rightEngine = undefined;
+    let rightEngineXform = undefined;
+    let landerPath = undefined;
+
+// [OPTIONAL] Override the state parameter names if needed
+const position_x_Key = 'x_position';
+const position_y_Key = 'y_position';
+
+function setTheme() {
+  svgDoc = document.getElementById("imported-svg").contentDocument;
+  if (svgDoc) 
+  {
+    // Define JS objects for the SVG elements and code box
+    lander = svgDoc.getElementById('landergroup');
+    ground = svgDoc.getElementById('ground');
+    jsonBox = document.getElementById('jsonBox');
+  }
+
+  // Adjust the visualizer colors based upon the selected theme 
+  if (darkMode) {
+    document.body.style.backgroundColor = '#333';
+    document.body.style.color = '#fff';
+  }
+  else 
+  {
+    document.body.style.backgroundColor = '#fff';
+    document.body.style.color = '#000';
+  }  
+}
+
+function MetersToXPixels(x_coord)
+{
+  // 10 pixels is 2 meters, origin at 100 px
+  // Well, i have no idea where the origin is, but this works
+  const X_origin = 0;
+  return x_coord * 5 + X_origin;
+}
+
+function MetersToYPixels(y_coord)
+{
+  // 10 pixels is 2 meters, origin at 250 px
+  // Well, i have no idea where the origin is, but this works
+  const Y_origin = 0; // 45;
+  return (y_coord * -5) + Y_origin;
+}
+
+function MetersToXPixelsAbs(x_coord)
+{
+  // 10 pixels is 2 meters, origin at 100 px
+  // Well, i have no idea where the origin is, but this works
+  const X_origin = 100;
+  return x_coord * 5 + X_origin;
+}
+
+function MetersToYPixelsAbs(y_coord)
+{
+  // 10 pixels is 2 meters, origin at 250 px
+  // Well, i have no idea where the origin is, but this works
+  const Y_origin = 250;
+  return (y_coord * -5) + Y_origin;
+}
+
+// setup the document
+function setup() 
+{
+  const jsonBox = document.getElementById('jsonBox');
+  // loading text
+  if (debug) {
+    jsonBox.textContent = "Waiting...";
+  }
+  else {
+    
+  }
+
+  svgDoc = document.getElementById("imported-svg").contentDocument;
+  if (svgDoc)
+  {
+    // cache the JS objects
+    lander = svgDoc.getElementById('landergroup');
+    mainEngine = svgDoc.getElementById('thrust-main');
+    leftEngine = svgDoc.getElementById('thrust-left');
+    rightEngine = svgDoc.getElementById('thrust-right');
+    landerPath =svgDoc.getElementById('landerpath');
+
+    landerXform = lander.getAttribute('transform');
+    mainEngineXform = mainEngine.getAttribute('transform');
+    leftEngineXform = leftEngine.getAttribute('transform');
+    rightEngineXform = rightEngine.getAttribute('transform');
+
+    maxFlameHeight = parseInt(mainEngine.getAttribute("height"));
+    if (debug)
+    {
+      jsonBox.textContent += `\nmaxFlameHeight is ${maxFlameHeight}`;
+    }
+
+    const leftPole = svgDoc.getElementById("leftpole");
+    const rightPole = svgDoc.getElementById("rightpole");
+    if (leftPole != null)
+    {
+      leftPole.setAttribute("stroke", "white");
+    }
+    else {
+      jsonBox.textContent += "\nLeft pole is null in setup()";
+    }
+    if ( rightPole != null)
+    {
+      rightPole.setAttribute("stroke", "white");
+    }
+    else {
+      jsonBox.textContent += "\nRight pole is null in setup()";      
+    }
+  } // if svgDoc
+
+  // adjust our colors based upon theme.
+  if (darkMode)
+  {
+    document.body.style.backgroundColor = "#333";
+    document.body.style.color = "white";
+  }
+
+  // initial update
+  updateVisualizer({
+    version: "1.0.0",
+    type: "IterationUpdate",
+    meta: {
+      episode: 0,
+      iteration: 1,
+      cumulative: 0.0,
+      selectedConcept: null
+    },
+    state: {
+      x_position: -10,
+      y_position: 40,
+    },
+    action: {
+      engine1: 0.2,
+      engine2: 0.6,
+    },
+  });
+  if ( testing )
+  {
+    updateVisualizer({
+      version: "1.0.0",
+      type: "IterationUpdate",
+      meta: {
+        episode: 0,
+        iteration: 2,
+        cumulative: 0.0,
+        selectedConcept: null
+      },
+      state: {
+        x_position: -8,
+        y_position: 30,
+      },
+      action: {
+        engine1: 0.2,
+        engine2: 0.6,
+      },
+    });
+  }
+}
+
+function scaleMe(obj, origXform, sx, sy, fx, fy)
+{
+  // sx = scale in X direction
+  // sy: scale in Y direction
+  // fx:  fraction of the way along the X direction for transform-origin
+  // fy: fraction of the way along the Y direction for transform-origin
+  // scaleMe(o, xform, 1, 2, 0.5, 0.0) scales the object by 2x in Y direction from top middle of the object.
+  if ( obj != null)
+  {
+    const bBox = obj.getBBox();
+    const cx = bBox.x + fx * bBox.width;
+    const cy = bBox.y + fy * bBox.height;
+    const newXform = ` translate(${cx}, ${cy}) scale(${sx},${sy}) translate(${-cx}, ${-cy})`;
+    obj.setAttribute('transform', origXform + newXform);
+  }
+}
+
+function updateVisualizer(jsonData) {
+
+  // Define JS objects for the SVG elements and code box
+          
+  // Pull out the state info and convert units 
+  var x_position = jsonData.state[position_x_Key];
+  var y_position = jsonData.state[position_y_Key];
+  const mainThrustValue = jsonData.action['engine1'];
+  const leftThrustValue = Math.abs(Math.min(jsonData.action['engine2'], 0));
+  const rightThrustValue = Math.max(0, jsonData.action['engine2']);
+
+  if (debug)
+  {
+    // Convert message to formatted JSON text for display 
+    var jsonString = JSON.stringify(jsonData, null, 4);
+    // Update the code block and positions of graphical elements 
+    jsonBox.textContent = jsonString;
+  }
+
+  if (lander == null)
+  {
+    jsonBox.textContent += "\nLander is NULL";
+  }
+  else
+  {
+    const newXform = ` translate(${MetersToXPixels(x_position)},${MetersToYPixels(y_position)}) `;
+    // the order of the transforms is important on the next line
+    lander.setAttribute('transform', newXform+landerXform);
+    if (landerPath != null)
+    {
+      const iterationNumber = jsonData.meta['iteration'];
+      if ( iterationNumber == 0)
+      {
+        // do nothing
+      }
+      else if ( iterationNumber == 1)
+      {
+        // Create a path
+        landerPath.setAttribute("d", `M ${MetersToXPixelsAbs(x_position)},${MetersToYPixelsAbs(y_position)}`);
+        if ( testing )
+        {
+          // pretend to add a path here
+          const oldPath = landerPath.getAttribute("d");
+          const newPath = ` L ${MetersToXPixelsAbs(x_position+10)},${MetersToYPixelsAbs(y_position-10)}`;
+          landerPath.setAttribute("d", oldPath + newPath);
+          
+        }
+      } else {
+        // Add to the path
+        const oldPath = landerPath.getAttribute("d");
+        const newPath = ` L ${MetersToXPixelsAbs(x_position)},${MetersToYPixelsAbs(y_position)}`;
+        landerPath.setAttribute("d", oldPath + newPath);
+      }
+    }
+    else 
+    {
+      if ( jsonData.meta['iteration'] == 1)
+      {
+        jsonBox.textContent += "\npath 'landerpath' is not found";
+      }
+    }
+    //var s = "translate(" +MetersToXPixels(x_position) + "," + MetersToYPixels(y_position)+")";
+    //jsonBox.textContent += `\n${s}`;
+    // lander.transform = 'translate(80px,40px)';
+    //lander.setAttribute('transform','translate(0,45)');
+  }
+  if (mainEngine == null)
+  {
+    jsonBox.textContent += "\nMain engine (thrust-main) not found";
+  }
+  else {
+    scaleMe(mainEngine, mainEngineXform, 1.0, mainThrustValue, 0.5, 0.0);
+    scaleMe(leftEngine, leftEngineXform, 1.0, leftThrustValue, 0.5, 0.0);
+    scaleMe(rightEngine, rightEngineXform, 1.0, rightThrustValue, 0.5, 0.0);
+  }
+}
+
+function init() {
+
+  // on load
+  if ( false)
+  {
+    window.addEventListener("load", () => {
+      setup();
+      // Adjust the visualizer colors based upon the selected theme 
+      setTheme();
+    });
+  }
+        
+  // Add an event listener to catch messages from Bonsai
+  window.addEventListener('message', 
+                          (event) => {
+                            const data = JSON.parse(event.data);
+                            updateVisualizer(data);
+                          }, false
+                         );
+}
+  </script>
+</head>
+
+<body onload="setup(); setTheme(); init()">
+  <!--
+  <svg preserveAspectRatio="xMidYMid meet" height="100%" width="100%" viewBox="-25 0 25 50">
+    <rect id="lander" x="-10"   y="40" width="2"    height="3" fill="#aa0" />
+    <rect id="ground"  x="-25"  y="0"  width="50"  height="0.1"  fill="#ccc" />
+    <rect id="l_flag"  x="-2" y="1"   width="0.1" height="2"  fill="#999" />
+    <rect id="r_flag"  x="2" y="1"   width="0.1" height="2"  fill="#999" />
+  </svg>
+  -->
+  <!--   
+    width="100%" height="100%"
+  -->
+  <object
+    data="landerscape.svg"
+    type="image/svg+xml"
+    id="imported-svg"
+    style="float: left; border: 4px dotted blue;"
+    width="250" height="409"
+  >
+  </object>
+  <pre id="jsonBox" style="display: box; float: left;"></pre>
+  <script language="JavaScript">
+    init();
+  </script>
+</body>
+
+</html>
+
+

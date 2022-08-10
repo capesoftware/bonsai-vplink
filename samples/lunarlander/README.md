@@ -41,8 +41,8 @@ and the lander itself is 2 m wide.  The flags are centered around the (x,y) coor
 
 ## Inkling Features used
 
-* Action Masking
 * Multi-concept
+* Action Masking (coming)
 
 ## State Tags
 * x_position -- (-50 .. 50) meters -- The horizontal position of the lander relative to the midpoint of the target flags.
@@ -69,10 +69,8 @@ simulator, click on Create Brain button and and type in the name of the brain
 to copy paste the code from inkling file (lunarlander.ink), update the
 simulator name in the inkling code and train the brain.
 
-<!--
-If you use the FlowOptimizer.ink inkling file, you may get results like this.  ![](FlowOptimization_BrainTraining.png)
--->
-
+> Note that while this example is called the Lunar langer, the gravity is actually 
+set to that which we experience on Earth.
 
 ### Using initial conditions files
 

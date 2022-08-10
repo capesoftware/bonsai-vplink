@@ -1,0 +1,15 @@
+# VALUES=EU
+Gravity	9.8	Auto
+Mass	100	Auto
+Random	16.1199	Auto
+angle	0	Auto
+engine1	0.5	Auto
+engine2	0	Auto
+fuel	100	Manual
+left_leg	0	Auto
+right_leg	0	Auto
+rotation	0	Auto
+x_position	0	Auto
+x_velocity	0	Auto
+y_position	4	Auto
+y_velocity	0	Auto
