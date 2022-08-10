@@ -7,3 +7,12 @@ samples/flowoptimizer/0README.html
 *.rev
 samples/flowoptimizer/FlowOptimizer.cfg
 samples/flowoptimizer/FlowOptimizer.tag
+samples/lunarlander/visualization/landerscape_opt.svg
+samples/lunarlander/visualization/landerscape1.svg
+samples/lunarlander/visualization/mainthrust.svg
+samples/lunarlander/Lander.xcf
+samples/lunarlander/Lander1.xcf
+samples/lunarlander/visualization/landerscape_plain.svg
+# samples/simpletank/visualization/0README.html
+*README.html
+samples/lunarlander/lander-viz.html
