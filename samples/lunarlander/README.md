@@ -69,7 +69,7 @@ simulator, click on Create Brain button and and type in the name of the brain
 to copy paste the code from inkling file (lunarlander.ink), update the
 simulator name in the inkling code and train the brain.
 
-> Note that while this example is called the Lunar langer, the gravity is actually 
+> Note that while this example is called the Lunar lander, the gravity is actually 
 set to that which we experience on Earth.
 
 ### Using initial conditions files
