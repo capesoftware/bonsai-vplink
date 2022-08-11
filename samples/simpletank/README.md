@@ -82,7 +82,7 @@ that has the current level and the level from the previous time step.
 ## Start a local copy of VP Link
 
 * Start the VP3 Control Panel from the Start menu.  It is under the VP Link folder in the Start Menu.  The picture below shows the VP3 Control Panel.
-![VP3 Control Panel](../../docs/
+![VP3 Control Panel](../../docs/VP3ControlPanel.png)
 * Ensure that a VP Link server is running.  If the middle area of the VP3 Control Panel is empty, then click the "Start VP3" button.
 * Double-click the SimpleTank.rev file from this directory to open the VP Link GUI for this model.
 * From the Commands menu, choose "Database Information" to ensure that there are 16 tags loaded in the server.  If not, you will need to clear the tags (Commands/Clear Tags)
