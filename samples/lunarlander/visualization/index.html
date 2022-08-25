@@ -25,6 +25,7 @@
 // [OPTIONAL] Override the state parameter names if needed
 const position_x_Key = 'x_position';
 const position_y_Key = 'y_position';
+var   gLastIterationNumber = 1000;
 
 function setTheme() {
   svgDoc = document.getElementById("imported-svg").contentDocument;
@@ -204,9 +205,18 @@ function updateVisualizer(jsonData) {
   // Pull out the state info and convert units 
   var x_position = jsonData.state[position_x_Key];
   var y_position = jsonData.state[position_y_Key];
-  const mainThrustValue = jsonData.action['engine1'];
-  const leftThrustValue = Math.abs(Math.min(jsonData.action['engine2'], 0));
-  const rightThrustValue = Math.max(0, jsonData.action['engine2']);
+  var mainThrustValue = 0;
+  if( 'engine1' in jsonData.action)
+  {
+    mainThrustValue = jsonData.action['engine1'];
+  }
+  var leftThrustValue = 0;
+  var rightThrustValue = 0;
+  if ('engine2' in jsonData.action)
+  {
+    leftThrustValue = Math.abs(Math.min(jsonData.action['engine2'], 0));
+    rightThrustValue = Math.max(0, jsonData.action['engine2']);
+  }
 
   if (debug)
   {
@@ -230,9 +240,9 @@ function updateVisualizer(jsonData) {
       const iterationNumber = jsonData.meta['iteration'];
       if ( iterationNumber == 0)
       {
-        // do nothing
+        // this never happens, do nothing
       }
-      else if ( iterationNumber == 1)
+      else if ( iterationNumber < gLastIterationNumber)
       {
         // Create a path
         landerPath.setAttribute("d", `M ${MetersToXPixelsAbs(x_position)},${MetersToYPixelsAbs(y_position)}`);
@@ -244,11 +254,15 @@ function updateVisualizer(jsonData) {
           landerPath.setAttribute("d", oldPath + newPath);
           
         }
-      } else {
+        gLastIterationNumber = iterationNumber;
+      } 
+      else 
+      {
         // Add to the path
         const oldPath = landerPath.getAttribute("d");
         const newPath = ` L ${MetersToXPixelsAbs(x_position)},${MetersToYPixelsAbs(y_position)}`;
         landerPath.setAttribute("d", oldPath + newPath);
+        gLastIterationNumber = iterationNumber;
       }
     }
     else 
