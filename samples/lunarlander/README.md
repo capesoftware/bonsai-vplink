@@ -19,15 +19,15 @@ engine1 and engine2.  Engine #1 provides vertical thrust and will
 allow the 100 kg lander to hover (in Earth gravity) when its output is 0.5.
 The thrust from the lander is linear with the engine output.
 
-The lander also has two horizontal engines to push it left and right.
+The lander also has two horizontal thrusters to push it left and right.
 To keep the controls simple, there is just a single output that controls 
-these two engines.  This is known as a split-range controller in automation jargon.  
+these two thrusters.  This is known as a split-range controller in automation jargon.  
 The output ranges from -1.0 (full thrust left) to +1.0
 (full thrust right).  Zero output for engine #2 will result in no thrust to
-the left or right by the horizontal engines.  Note that by using the split range
-controller, the situation where the left and right engines are fighting each other
+the left or right by the horizontal thrusters.  Note that by using the split range
+controller, the situation where the left and right thrusters are fighting each other
 is avoided.  The split-range controller enforces the requirement that while one horizontal
-engine is firing, the other is off.  In addition to avoiding wasting fuel, 
+thrusters is firing, the other is off.  In addition to avoiding wasting fuel, 
 this also has the nice side effect of making
 it easier to train the brain.
 
@@ -47,12 +47,12 @@ and the lander itself is 2 m wide.  The flags are centered around the (x,y) coor
 ## State Tags
 * x_position -- (-50 .. 50) meters -- The horizontal position of the lander relative to the midpoint of the target flags.
 * y_position -- (0 .. 100) meters -- The height above the surface.
-* x_velocity -- (-100 .. 100) meters/sec -- The horizontal position of the lander relative to the midpoint of the target flags.
-* y_velocity -- (-100 .. 100) meters/sec -- The height above the surface.
+* x_velocity -- (-100 .. 100) meters/sec -- The horizontal velocity of the lander, positive is to the right.
+* y_velocity -- (-100 .. 100) meters/sec -- The vertical velocity of the lander, positive is up.
 
 ## Action Tags
-* engine1 -- Range (0 .. 1), the output from the vertical engine
-* engine2 -- Range (-1 .. 1), the output from the horizontal engine.  Negative values move the lander to the left.
+* engine1 -- Range (0 .. 1), the output from the vertical (main) engine
+* engine2 -- Range (-1 .. 1), the output from the horizontal thrusters.  Negative values move the lander to the left.
 
 ## How to get started
 If you just want to get started with the Lunar Lander, create a
