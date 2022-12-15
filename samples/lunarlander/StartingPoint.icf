@@ -1,7 +1,10 @@
 # VALUES=EU
+CrashThreshold	0.75	Auto
+Crashed	0.000000	Auto
 Gravity	9.8	Auto
 Mass	100	Auto
-Random	16.1199	Auto
+Random	17.4169	Auto
+RelWindVel	0	Auto
 angle	0	Auto
 engine1	0.5	Auto
 engine2	0	Auto
@@ -9,7 +12,9 @@ fuel	100	Manual
 left_leg	0	Auto
 right_leg	0	Auto
 rotation	0	Auto
+wind	0	Manual
 x_position	-10	Auto
 x_velocity	0	Auto
 y_position	40	Auto
-y_velocity	0	Auto
+y_velocity	-2.6363e-07	Auto
+y_velocityAccum	-7.05424E-07	Auto
