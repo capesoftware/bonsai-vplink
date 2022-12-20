@@ -8,7 +8,7 @@ That means you have a SIM called "lunarlander", and are ready to create a brain.
 ## Let's start with a simple brain
 
 If you have not created a brain yet, go to the bonsain main page and create an empty brain.
-Call it {your_initials}\_lunarLander.  This way, you can keep your brains separate from others
+Call it {your_initials}\_LunarLander.  This way, you can keep your brains separate from others
 that may also be using your bonsai workspace.
 
 Copy the [lunarlander_ch1.ink](lunarlander_ch1.ink) code and paste it into your brain.
@@ -33,10 +33,10 @@ at the start of each training episode.  The values of the SimConfig are set by
 lesson/scenario sections in your Inkling code.
 
 ### Constants
-Lines 54-61 define some constants so we do not need to put "magic" number constants
+Lines 54-61 define some constants so we do not need to put "magic" numbers
 throughout the code.  While is seems easier to just put in a value of 0.1 for the
 VP Link time step, anybody who reads your code one month from now (including you)
-will apreciate the use of named constants instead of bare numbers.
+will appreciate the use of named constants instead of bare numbers.
 
 ### Simulator
 Lines 64-67 define the simulator to use to train this brain.  If you did not call
@@ -71,7 +71,7 @@ by bonsai.  If the limit is too long, then once bonsai gets very close to the 10
 rate, it will still try for that many iterations to try to improve the result.  Numbers
 from 200k to 1 million are common.
 
-#### Goals
+#### Curriculum Goals
 Lines 88-100 are the most important thing that you as "the human" can specify.
 These are what determines if bonsai is doing a good job or not.  In this case we have
 set out the following goals.
@@ -91,7 +91,7 @@ is between -2.0 and 2.0 meters.  (The target landing point is at x=0, y=0).
 * FlyingIntoSpace:  We want to avoid this, so naturally we use the "avoid" statement.
 This tells bonsai it has done a bad thing.  In addition, the training episode is terminated,
 so bonsai does not spend more time doing more bad things.  Avoid statements are 
-very important to limit the training time.  Otherwise it is very likely the brain
+very important to limit wasted training time.  Otherwise it is very likely the brain
 would continue the training in some region of the SimState we do not care about.   In this
 case, there is really no benefit to learn to go up to 50m above the flags.  
 
@@ -99,7 +99,7 @@ case, there is really no benefit to learn to go up to 50m above the flags.
 variable.  In this case, getting inside the "box" of being very close to landing and 
 with a large downward velocity is bad.
 
-#### Lessons
+#### Curriculum Lessons
 Lessons give the brain some guidance on how to train itself.  Imagine you are learning 
 to swim.  Jumping off a boat into the ocean may not be the ideal way to start.  You 
 might start by wading into the shallow end of a pool and learning how to float.  Lessons
@@ -115,7 +115,7 @@ Click on the concept to be trained (there is only one, I know), and then click t
 ![](ClickLandToTrain.png)
 
 You will find this sample takes a very, very long time to train. It might not even train
-at all before it reaches one of the training limits.  That's ok, it why we have Chapter 2.
+at all before it reaches one of the training limits.  That's ok, it's why we have Chapter 2.
 In Chapter 2, you will learn how to help the brain learn.
 
 ## Further investigations

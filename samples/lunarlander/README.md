@@ -72,7 +72,7 @@ and the lander itself is 2 m wide.  The flags are centered around the (x,y) coor
 ## How to get started
 
 If you just want to get to the final answer with the Lunar Lander, create a
-simulator from the [VP Link loadable](lunarlander_sim.zip) and
+simulator from the [lunarlander_sim.zip VP Link loadable](lunarlander_sim.zip) and
 use the included [lunarlander.ink](lunarlander.ink) file to train a brain.
 To do this, open https://preview.bons.ai/ in the web browser and open your workspace.
 To add the simulator, click the Add sim button located on the left
@@ -90,8 +90,11 @@ set to that which we experience on Earth.
  Copy the code from the Inkling file [lunarlander.ink](lunarlander.ink) in this directory into the brain's Inkling.  
  You can now start training the brain.
  
+ >Warning: This is a complicated example.  If you need it as a reference for a code sample, fine. However,
+ if you actually want to **learn something**, see the next paragraph.
+ 
  ## I want to learn something
- In this case, now that you have a SIM, read the rest of this documentation to get an 
+ In this case, now that you have a SIM, read the rest of this documentation page to get an 
  understanding of how things work with a VP Link simulation, then go to [Chapter 1](chapter_1), and follow the instructions
  to create a simple brain.  Further chapters will discuss how to make incremental
  improvements to that brain until we end up with the final brain here in this directory.
