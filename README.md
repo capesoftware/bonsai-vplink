@@ -86,6 +86,8 @@ Use these links to explore the sample VP Link models you can use to train a Bons
 * [Simple tank level control](samples/simpletank/README.md).  A good place to start training your first Bonsai brain.
 * [Quad-tank model](samples/quadtank/README.md).  A well-studied problem with a larger state space for Bonsai to explore.
 * [Enzyme Bug Reactor](samples/bugreactor/README.md).  Sample bioreactor illustrating deadtime and unmeasured process variables to control.
+* [Lunar Lander](samples/lunarlander/README.md).  Classic arcade game implemented in VP Link designed as a learning resource for bonsai engineers.
+* [Flow Optimizer](samples/flowoptimizer/README.md).  Allow bonsai to choose the highest value split of a process stream.
 
 ## Trademarks
 

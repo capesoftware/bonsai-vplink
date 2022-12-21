@@ -10,16 +10,16 @@ Use the supplied [VP Link loadable](lunarlander_sim.zip) to create
 your Bonsai Simulator.
 
 
-![](landerlandscape.png)
+![](lander_brain.png)
 
 ## Layout of this example
 
 This is a complicated example.  The files in this directory (the top level one)
 represent
 the completed brain that uses many features of the Inkling language.  You will 
-gain the most benefit from this sample, if you start with the common files from 
+gain the most benefit from this sample if you start with the common files from 
 this directory, and then add in the Inkling files in the various subchapters, 
-starting with chapter 1.  As you progress through the chapters, the documentation
+starting with [chapter 1](chapter_1/README.md).  As you progress through the chapters, the documentation
 in each chapter folder will lead you through designing a brain that utilizes more
 of the Inkling features, describing along the way why those features are useed.
 
@@ -58,6 +58,7 @@ and the lander itself is 2 m wide.  The flags are centered around the (x,y) coor
 * Programmed concepts
 * The selector concept
 * Action Masking
+* Using a Visualizer
 
 ## State Tags
 * x_position -- (-50 .. 50) meters -- The horizontal position of the lander relative to the midpoint of the target flags.
@@ -83,7 +84,7 @@ in the workspace. Once the simulator is created, the select the
 simulator, click on Create Brain button and and type in the name of the brain
  (check for duplicate names). An untrained brain will be created.
 
-> Note that while this example is called the Lunar lander, the gravity is actually 
+> Note that while this example is called the Lunar Lander, the gravity is actually 
 set to that which we experience on Earth.
  
  ## I Just want to see it work

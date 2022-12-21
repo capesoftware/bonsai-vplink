@@ -37,12 +37,18 @@ The SimState, SimAction, and SimConfig remain the same from the previous example
 Below is a description of the changed items.
 
 ### The Visualizer
-Line 12 defines the Visualizer.  The Visualizer is a web site that the bonsai 
+Line 12 defines the Visualizer.  
+![](Ch2_Visualizer.png)
+The Visualizer is a web site that the bonsai 
 platform will contact and send the SimState, SimAction and SimConfig information
 via a POST request.  We will skip the details in this discussion, but you can
-find more information about creating a visualizer
+find more information about creating a bonsai visualizer
 [here](https://learn.microsoft.com/en-us/bonsai/tutorials/visualizer-plugin).
 
+The visualizer shows up just above the live plots when a brain is training or when
+you are looking at Custom Assessment data.  In the case of the Lunar Lander a trail
+indicates where the lander has been during the episode.
+![](Ch2_VisualizerDisplay.png)
 ### Concepts
 
 If you think about how you might want to operate the lander, you might have two 
@@ -73,14 +79,18 @@ brain design ends up looking like this.
 
 #### Hover Concept
 Lines 79-132 show the new concept we have added to this brain design.  You
-can start by copying the Land concept and pasting it into the graph object
-just above the Land concept.  
+can start by copying the Land concept from the previous chapter's brain
+and pasting it into the graph object
+just above the Land concept.  This will duplicate the concept (which bonsai
+will complain about), but you can easily fix that by changing the name of the
+new concept to Hover
 
 The curriculum/training objet for the Hover concept is just like the Land
 concept except that the EpisodeIterationLimit on line 85 uses the constant,
 kEpisodeHoverMaxSecs, instead of the kEpisodeLandMaxSecs.  This is because
 we might need a little more time to hover the vehicle since it is coming from
 far away.  
+![Curriculum Training](Ch2_CurriculumTraining.png)
 
 The big change in the Hover concept are the new goals. We no longer need
 the LandOnGround skill, so that is removed as a goal.  Similarly, we do
@@ -89,6 +99,7 @@ however, is to Hover.  So the new goal is called Hovering, and it tries to
 maintain (therefore we use the "drive" statement) the y-position between
 3 and 5 meters, along with a y-velocity that is close to zero--in this case 
 between -TargetCrashThreshold and +TargetCrashThreshold.  
+![Goals](Ch2_Goals.png)
 
 And just to make sure we do not waste time training on things that we do not
 need to learn, we have two avoid statements.  Hitting the ground is a bad
@@ -100,7 +111,7 @@ of that.
 
 > Note, while doing actual training, you will likely see that many episodes
 are cut short because the craft was "flying into space".  That shows the 
-goal is working!
+goal to avoid that is working!
 
 #### Hover Lessons
 
@@ -112,6 +123,12 @@ to between 2 and 7 meters from the ground.  After that, on lines 113-120, there
 is a lesson that starts the lander from between 2 and 10 m off the ground.
 Then, finally, we have the last lesson which starts between 1 and 40 m off the
 ground.
+
+Do not forget to put a limit on the x-position as well. Otherwise bonsai will
+choose a value betwween the limits that are set out in the SimState.  In our case,
+that would be much father out than the limits of the visualizer.  So, for now,
+we limit the values of the x-position and y-position to what the visualizer can 
+show.
 
 #### Land Concept
 
@@ -128,23 +145,24 @@ training iterations may increase.
 The last thing we need to add is the "Captain".  This is a learned concept
 that decides which of the other two concepts to use.  
 
-Line 177 has some significant changes.  First, as we have three concepts
+![The Mission Goals](Ch2_TheMissionGoals.png)
+Line 191 has some significant changes.  First, as we have three concepts
 in this brain, one of them needs to be designated as the one which outputs
 the SimAction to the SIM.  This is done with the "output" keyword.  Second,
 as this concept needs to use the other two concepts as inputs, the parameters
 to the concept include both of the other two concepts, Hover and Land.
 
-Lines 178-179 are also significant here.  Because we want this concept to
+Lines 192-193 are also significant here.  Because we want this concept to
 only select between the other two concepts, we add the "select" keywords
 to tell bonsai it can pick from one or the other input concepts.  Without
-these "select" statments bonsai would try to modify the outputs, just the
+these "select" statments bonsai would try to modify the outputs, just like the
 other two concepts did.
 
-Line 183 is changed so that this concept has enough time (or iterations) to 
+Line 197 is changed so that this concept has enough time (or iterations) to 
 complete both actions so the EpisodeIterationLimit includes tims for both of
 those concepts.
 
-Line 185-193 has the goals.  Note that here, we only put the final mission
+Line 199-207 has the goals.  Note that here, we only put the final mission
 goals.  Since this is just a selector we should not have to care about
 flying into space, becuase the other concepts were both trained not to do that.
 It is also possible that the "avoid HardLanding" goal may be superflous. 
@@ -161,13 +179,13 @@ button to start the training.
 With any luck you will find that the individual concepts do not take as long
 to train as the monolithic concept we created in the first Chapter.
 
-Still want to learn more about bonsai features?  Try Chapter 3.
+Still want to learn more about bonsai features?  Try [Chapter 3](../chapter_3).
 
 ## Further investigations
 
 Here are some things you can try on your own that were discussed in the text above.
 
-*  Is the "avoid Hardlanding" goal in TheMission select concept superfluous?
+*  Is the "avoid HardLanding" goal in TheMission select concept superfluous?
 *  How does the value for the NoProgressLimit affect the length of brain training
 when there is more than one lesson to be learned?
 

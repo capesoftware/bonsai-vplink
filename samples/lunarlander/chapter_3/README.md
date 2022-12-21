@@ -179,4 +179,9 @@ impact do they have?
 * How would you eliminate those errors?
 * Take a look at the documentation for Chapter 4.  Chapter 4 takes you on a journey 
 to make some changes that take advantage of
-additional features of this VP Link based SIM.  
+additional features of this VP Link based SIM.
+*  How effective is the brain training in a single-concept vs. multi-concept architecture?
+*  Can you architect a reward function that works as good as or better than the Goals?
+*  Can a brain that is trained to work in Earth gravity also effectively land the lander
+with Moon gravity?  This is a common question that relates to the sim-to-real gap.  We will 
+pursue that in Chapter 4 as well.
