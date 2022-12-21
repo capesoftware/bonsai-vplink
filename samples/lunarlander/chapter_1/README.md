@@ -3,11 +3,13 @@
 If you are here, you should have completed the [instructions](../README.md) in the documentation
 in the root directory of this sample.
 
-That means you have a SIM called "lunarlander", and are ready to create a brain.
+That means you have a SIM called "lunarlander", and either have already created 
+or are ready to create a brain.
 
 ## Let's start with a simple brain
 
-If you have not created a brain yet, go to the bonsain main page and create an empty brain.
+If you have not created a brain yet, click on your lunarlander SIM and create a brain
+using the green button in the top right of the page.
 Call it {your_initials}\_LunarLander.  This way, you can keep your brains separate from others
 that may also be using your bonsai workspace.
 
