@@ -62,8 +62,7 @@ const kEpisodeLandMaxSecs = 60    # s, how long (in sim time) should it take the
 
 # This defines the simulator to be used.
 simulator Simulator(action: SimAction, config: SimConfig): SimState {
-    # Automatically launch the simulator with this
-    # registered package/SIM name.
+    # Automatically launch the simulator with this registered package/SIM name.
     package "lunarlander"
 }
 
@@ -94,8 +93,8 @@ graph (input: SimState): SimAction {
                 drive WithinFlags:
                     s.x_position in Goal.Range(-2, 2)
                 avoid HardLanding:
-                    # s.y_velocity in Goal.RangeBelow(-(TargetCrashThreshold+0.2))  # give a little buffer
-                    [s.y_position, s.y_velocity] in Goal.Box([0,1], [-100, -TargetCrashThreshold])
+                    # v01 [s.y_position, s.y_velocity] in Goal.Box([0,1], [-100, -TargetCrashThreshold])
+                    [s.y_position, s.y_velocity] in Goal.Box([0,1], [-100, -(TargetCrashThreshold+0.5)])
                 avoid FlyingIntoSpace:
                     s.y_position in Goal.RangeAbove(50)  # y_postion can go to 100, the visualizer only goes to 50
             }

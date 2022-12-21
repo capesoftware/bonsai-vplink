@@ -6,6 +6,11 @@ inkling "2.0"
 using Math
 using Goal
 
+# A visualizer is optional, but a nice way to see what is happening while your brain is training 
+#  or in custom assessments.  Note this web site provides two different visualizers, a normal one
+#  and a "Debug Visualizer".
+const SimulatorVisualizer = "https://intelligent-ops.com/bonsai/visualizations/lunarlander/index.html"
+
 # Note that the SimState, SimAction and SimConfig can all be generated from a VP Link simulation
 #   by the Bonsai Interface Creator tool.
 # SimState, SimAction, and SimConfig are identical to the prior version--no changes here
@@ -170,6 +175,8 @@ graph (input: SimState): SimAction {
     }
 
     output concept TheMission(Hover, Land): SimAction {
+        select Hover
+        select Land
         curriculum {
             source Simulator
             training {
