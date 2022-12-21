@@ -1,4 +1,5 @@
 # 19-Dec-2022 WDJ  This brain is the full brain in the Lunar Lander training series.
+#                  It is the result after going through Chapter 3
 #                  It is very complicated because it attempts to show off all kinds of
 #                  bonsai features.  If you want to get started without drinking from a firehose,
 #                  follow the example by starting with a simpler brain at 
@@ -9,13 +10,12 @@ using Goal
 
 # A visualizer is optional, but a nice way to see what is happening while your brain is training 
 #  or in custom assessments.  Note this web site provides two different visualizers, a normal one
-#  and a "Debug Visualizer".
+#  and a "Debug Visualizer".  While doing assessments of TheMission, it is useful to use the Debug Visualizer
 const SimulatorVisualizer = "https://intelligent-ops.com/bonsai/visualizations/lunarlander/index.html"
 
 
 # Note that the SimState, SimAction and SimConfig can all be generated from a VP Link simulation
-#   by the Bonsai Interface Creator tool. This tool creates the SIM.ZIP file you can drop into
-#   an empty VP Link SIM to create your project-specific managed SIM.
+#   by the Bonsai Interface Creator tool.
 
 # Define a type that represents the per-iteration state returned by the simulator to the brain
 type SimState {
@@ -64,7 +64,7 @@ const TargetCrashThreshold = 0.5  # m/s, max velocity which should not crash the
 const VPLinkTimeStepSecs = 0.1    # s, this is the timestep of the underlying model
 const ReportEverySecs = 0.1       # s, this is the interval between SimState -> SimAction exchanges w/ bonsai
 const kTotalIterationLimit = 20000000  # iterations, limits an episode to this many iterations
-const kNoProgressLimit = 500000   # iterations, gives bonsai an idea of when to quit
+const kNoProgressLimit = 300000   # iterations, gives bonsai an idea of when to quit
 const kEpisodeHoverMaxSecs = 30   # s, how long (in sim time) should it take the brain to hover the lander
 const kEpisodeLandMaxSecs = 20    # s, how long (in sim time) should it take the brain to land the lander
 
@@ -114,29 +114,6 @@ function CombineEngines(e1: Engine1Action, e2: Engine2Action): SimAction {
     }
 }
 
-# A function which is useful inside a programmed reward function
-function VPLinkReward(target: number, currentValue: number, halfdiffA: number, halfdiffB: number) {
-    # See https://medium.com/@BonsaiAI/reward-functions-writing-for-reinforcement-learning-video-85f1219a0bde
-    # This reward is a combination of inverse exponential and a power function
-    # The rewardA is the eponential reward that gives a nice gradient to get near
-    #   the target.  
-    # The rewardB is a steeply sloped reward to encourage getting right on the target
-    # The precisionRewardFactor determines how important it is to get right on the target
-    # The range of this function is <0 .. precisionRewardFactor+1>
-    # 20-Sep-2021 WDJ Divided result by (1+precisionRewardFactor) so output range is now <0 .. 1>
-    var rewardA: number
-    var error: number
-    var rewardB: number
-    var precisionRewardFactor = 1
-    error = Math.Abs(target - currentValue)
-    rewardA = Math.E ** (-((error / halfdiffA) ** 2))
-    rewardB = 0
-    if (error < halfdiffB / 2) {
-        rewardB = 1 - Math.Sqrt(error / (halfdiffB / 2))
-    }
-    return (rewardA + precisionRewardFactor * (rewardB)) / (1 + precisionRewardFactor)
-}
-
 # A more flexible function which is useful inside a programmed reward function
 function VPLinkRewardEx(target: number, currentValue: number, halfdiffA: number, halfdiffB: number, expon: number, precisionRewardFactor: number, basement: number) {
     # See https://medium.com/@BonsaiAI/reward-functions-writing-for-reinforcement-learning-video-85f1219a0bde
@@ -164,48 +141,12 @@ function VPLinkRewardEx(target: number, currentValue: number, halfdiffA: number,
     return (rewardA + precisionRewardFactor * (rewardB)) / (1 + precisionRewardFactor)
 }
 
-
-# A possible function to teach the lander move between the flags
-function HoverXReward(s: SimState) {
-    var targetPos = VPLinkReward(0, s.x_position, 3, 0.5)
-    var lowVelocity = VPLinkReward(0, s.x_velocity, 6 * 0.02, 0.02)
-    return (targetPos + lowVelocity) / 2.0
-}
-
-# A possible function to teach the lander to Hover
-function HoverYReward(s: SimState) {
-    var targetPosReward = 0
-    var lowVelocityReward = 0
-    if (s.y_position > 0) {
-        targetPosReward = VPLinkReward(4, s.y_position, 2, 0.5)
-        lowVelocityReward = VPLinkReward(0, s.y_velocity, 15 * 0.1, 0.1)
-    }
-    return (3 * targetPosReward + lowVelocityReward) / 4.0
-}
-
-# A possible function to teach the lander to land slowly
-function LandingReward(s: SimState) {
-    var targetPosReward = 0
-    var lowVelocityReward = 0
-    if (s.y_position > 0) {
-        targetPosReward = VPLinkReward(0, s.y_position, 1, 5) + VPLinkReward(0, s.x_position, 1, 1)
-        lowVelocityReward = VPLinkReward(-0.4, s.y_velocity, 0.2, 0.4)
-    } else if ((s.y_position == 0) and (s.y_velocity < 0) and ( s.y_velocity > -0.5))
-    {
-        lowVelocityReward = lowVelocityReward + 10
-    } else 
-    {
-        lowVelocityReward = -100
-    }
-    return (targetPosReward + 3 * lowVelocityReward) / 5.0
-}
-
 # A revised reward function that teaches the lander to land slowly.
 function LandingReward_v2(s: SimState) {
     var targetPosReward = 0
     var lowVelocityReward = 0
     # Reward for being close to (0,0)
-    targetPosReward = VPLinkRewardEx(0, s.y_position, 5, 1, 0.7, 1.0, -0.5) + VPLinkRewardEx(0, s.x_position, 5, 1, 0.7, 1, 0.0)
+    targetPosReward = VPLinkRewardEx(0, s.y_position, 5, 1, 0.7, 1.0, -0.5) + VPLinkRewardEx(0, s.x_position, 4, 4, 0.7, 1, 0.0)
     if (s.y_position > 0) {
         # Also reward for going down at -0.4 m/x
         lowVelocityReward = VPLinkRewardEx(-0.4, s.y_velocity, 0.4, 1, 0.7, 1.0, 0.0)
@@ -289,10 +230,10 @@ graph (input: SimState): SimAction {
                 # These avoid statements will stop the episode early if reached (makes training go faster)
                 avoid HittingGround:
                     s.y_position
-                    in Goal.RangeBelow(0.01)
+                    in Goal.RangeBelow(0)
                 avoid FlyingIntoSpace:
                     s.y_position
-                    in Goal.RangeAbove(95)
+                    in Goal.RangeAbove(50)
             }
             lesson StartNear4m {
                 # Scenarios set the values in the SimConfig to drive the starting state
@@ -387,7 +328,7 @@ graph (input: SimState): SimAction {
             # Add goals or programmed rewares here describing what you want to teach the brain
             reward LandingReward_v2
             terminal function (s: SimState){
-                return s.y_position == 0
+                return (s.y_position == 0) or (s.y_position >= 45)
             }
             # See the Inkling documentation for goals syntax
             # https://docs.microsoft.com/bonsai/inkling/keywords/goal
@@ -435,7 +376,7 @@ graph (input: SimState): SimAction {
             mask function (s: SimState): number {
                 # return 1 if this option should be prohibited, 0 otherwise
                 # Do not hover if we are maintaining horizontal position or landing
-                var enabled: number<0, 1, > = (s.y_position > 3) or (s.x_position < -2) or (s.x_position > 2) or (Math.Abs(s.y_velocity) > 0.1)
+                var enabled: number<0, 1, > = (s.y_position > 3) or (s.x_position < -2) or (s.x_position > 2) or (s.y_velocity > 0.1)
                 return (enabled == false)
             }
         }
@@ -444,6 +385,7 @@ graph (input: SimState): SimAction {
                 # return 1 if this option should be prohibited, 0 otherwise
                 # only Land if we are in the zone
                 # Note: '(Abs(x - center) < radius)' is equivalent to 'x in Sphere(center, radius)'
+                #       We need to know this because you cannot use 'x in Sphere(center, radius)' in programmed functions
                 var enabled: number<0, 1, > = (s.y_position < 5) and (Math.Abs(s.y_velocity - (-0.2)) <= 0.3)
                 return (enabled == false)
             }

@@ -7,7 +7,7 @@ That means you have a SIM called "lunarlander" with a few versions already
 and you have a grammatically correct
 Inkling file that may or may not have actually trained.
 
-Since this is the last chapter, the files for this chapter are in the root
+Since this originally was the last chapter, the files for this chapter are in the root
 directory for this sample.  Use the lunarlander_sim.zip and lunarlander.ink from 
 [the linked directory](../)
 
@@ -145,15 +145,38 @@ See additional details at the [action mask documentation](https://learn.microsof
 When the best thing to do is easily described with a mathematical function,
 programmed rewards give you an option to tune the brain's performance.
 
-TODO: Talk about the LandingReward_v2 function and how it uses the VPLinkRewardEx() function.
+This brain uses a reward function.  Lin 326 uses the reward keyword in the 
+inkling file in the curriculum section.
+The reward is defined as a function elsewhere in t
+![reward keyword](reward_keyword.png)
+
+The reward function, LandingReward_v2 is defined on lines 145-167 as below.
+![Reward Function](LandingReward_v2.png)
+
+The astute observer will notice that this fuction makes use of another function,
+VPLinkRewardEx().  This is a generalized reward function that rewards the brain
+for getting a variable close to a target.  There are actually two rewards internal
+to the VPLinkRewardEx().  The documentation for the function is reproduced below.
+![](VPLinkRewardEx_docco.png)
 
 ## Give it a try
 
-blah blah blah
+Use the inkling found [here](../lunarlander.ink) to try out all the features mentioned in this chapter.
+
 
 ## Further investigations
 
-Here are some things you can try on your own that were discussed in the text above.
+Here are some things you can try on your own.
 
-
-
+* Does all this effort to make more focused bonsai concepts really either reduce the 
+training time or make a better brain.  How would you compare the brain trained in
+Chapter 1 vs. the brain trained as a result of using all these features.  How might
+your answer change if faced with a different problem, let's say one with a larger 
+state space?
+* Why do these errors come up while the brain is training?  And what operational
+impact do they have?
+![Training errors](Chapter3_TrainingErrors.png)
+* How would you eliminate those errors?
+* Take a look at the documentation for Chapter 4.  Chapter 4 takes you on a journey 
+to make some changes that take advantage of
+additional features of this VP Link based SIM.  
