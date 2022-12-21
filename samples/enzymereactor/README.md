@@ -136,7 +136,7 @@ variables that act on the reactor only.
 type ContinuousAction {
     # VP Link analog tag (0.0,2000.0), EU=l; Setpoint for Level in the Fermenter (normally 300)
     Reactor_Level_Setpoint_C: number<300.0 .. 1800.0>,
-    # VP Link analog tag (0.0,200.0), Eu=°F;
+    # VP Link analog tag (0.0,200.0), Eu=?F;
     ReactorFoodInlet_PastLoop_TempSetpoint: number<0.0 .. 200.0>,
     # VP Link analog tag (0.0,100.0), Eu=%;
     Acid_Flow_Vlv: number<0.0 .. 100.0>,
@@ -241,7 +241,7 @@ type PasteurizeState {
     Past_Startup_Mode: number<0 .. 1>,
     # VP Link digital tag (--,ReactorStartup), 
     Temp_PastLoop_In: number<0.0 .. 300.0>[3],
-    # VP Link analog tag (0.0,300.0), Eu=°F;
+    # VP Link analog tag (0.0,300.0), Eu=?F;
     Temp_PastLoop_OUT: number<0.0 .. 300.0>[3],
 }
 #This function will be used in the pasteurisation concept to reduce the overall state space

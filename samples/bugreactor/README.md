@@ -87,10 +87,10 @@ type SimAction {
     #LvlFermenter_SP: number<0.0 .. 2000.0>,
     ## VP Link analog tag (0.0,130.0), EU=l/min;
     #FlowSetPoint: number<0.0 .. 130.0>,
-    ## VP Link analog tag (0.0,200.0), Eu=°F;
+    ## VP Link analog tag (0.0,200.0), Eu=?F;
     #TempCWSetPoint: number<0.0 .. 200.0>,
 
-    # VP Link analog tag (0.0,200.0), Eu=°F;
+    # VP Link analog tag (0.0,200.0), Eu=?F;
     TempSetPoint: number<100.0 .. 200.0>,
 }
 
@@ -123,7 +123,7 @@ type PasteurizeState {
     Temp_E003_Out: number<0.0 .. 300.0>,
     # VP Link analog tag (0.0,1000.0), EU=kg/min; Production rate of bugs
     FoodFeedRate: number<0.0 .. 130.0>,
-    # VP Link analog tag (0.0,300.0), Eu=°F;
+    # VP Link analog tag (0.0,300.0), Eu=?F;
     Temp_E001_ShellIn: number<0.0 .. 300.0>[4],
 }
 
