@@ -107,6 +107,7 @@ graph (input: SimState): SimAction {
                     _timeStep: VPLinkTimeStepSecs,
                     _reportEvery: ReportEverySecs,
                     _initialConditions: "StartingPoint.icf",
+                    x_position: number<-4 .. 4>, # Start near target X 
                     y_position: number<2 .. 7>, # Start near target Y 
                 }
             }
@@ -116,6 +117,7 @@ graph (input: SimState): SimAction {
                     _timeStep: VPLinkTimeStepSecs,
                     _reportEvery: ReportEverySecs,
                     _initialConditions: "StartingPoint.icf",
+                    x_position: number<-10 .. 10>, # Start near target X 
                     y_position: number<2 .. 10>, # Start farther away
                 }
             }
@@ -125,6 +127,7 @@ graph (input: SimState): SimAction {
                     _timeStep: VPLinkTimeStepSecs,
                     _reportEvery: ReportEverySecs,
                     _initialConditions: "StartingPoint.icf",
+                    x_position: number<-20 .. 20>, # Start near target X 
                     y_position: number<1 .. 40>, # Start really high up
                 }
             }
@@ -152,7 +155,7 @@ graph (input: SimState): SimAction {
                     s.y_position in Goal.RangeBelow(0)
                 drive LandSlowly:   # i.e. do not crash the lander
                     s.y_velocity in Goal.Range(-TargetCrashThreshold, 0)
-                drive WithinFlags:
+                drive WithinFlags weight 3:
                     s.x_position in Goal.Range(-2, 2)
                 avoid HardLanding:
                     # s.y_velocity in Goal.RangeBelow(-(TargetCrashThreshold+0.2))  # give a little buffer
@@ -160,15 +163,26 @@ graph (input: SimState): SimAction {
                 avoid FlyingIntoSpace:
                     s.y_position in Goal.RangeAbove(50)  # y_postion can go to 100, the visualizer only goes to 50
             }
+            lesson StartCloseToFlags {
+                # Set the starting state a farther away from the flags. This should be more difficult
+                #   for the brain to achieve the result.
+                scenario {
+                    _initialConditions: "PreLandingPos.icf",
+                    _timeStep: VPLinkTimeStepSecs,
+                    _reportEvery: ReportEverySecs,
+                    x_position: number<-3 .. 3>, # Just 1 m outside the flags
+                    y_position: number<2 .. 4>, # Start off < 5 m above the landing spot
+                }
+            }
             lesson StartAnywhere {
                 # Set the starting state a farther away from the flags. This should be more difficult
                 #   for the brain to achieve the result.
                 scenario {
-                    _initialConditions: "StartingPoint.icf",
+                    _initialConditions: "PreLandingPos.icf",
                     _timeStep: VPLinkTimeStepSecs,
                     _reportEvery: ReportEverySecs,
-                    x_position: number<-45 .. 45>, # Give a 5 meter margin from the boundary of the problem
-                    y_position: number<1 .. 45>, # Start off the groun up to pretty high (but within the visualizer)
+                    x_position: number<-20 .. 20>, # The Visualizer only goes between -20 .. 20
+                    y_position: number<1 .. 5>, # We do not need to start high up, because Hover concept does that
                 }
             }
         }
