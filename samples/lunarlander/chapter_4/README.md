@@ -51,27 +51,50 @@ change the \_scenarios member to the string, "EnableFuel.sce".
 reward function or Goals to try to 
 minimize the fuel that the lander uses.
 
-## Using the wind
+## Using the wind as an example in the Sim-to-Real gap
 
-You will also notice that there is "wind".  Wind is a horizontal wind that 
-you can set the speed of.  Positive blows to the right, and negative blows 
+The idea that wind can blow the lunar lander either left or right 
+is an example of a "Sim-to-Real" gap.  That is, the brain was trained
+using a SimState that did not know anything about the wind.  And,
+in fact, the "wind" in the SIM that the brain trained on was set
+to zero.
+
+However, it the real world, there might be wind.  And in that case
+the brain will have to deal with the fact that it might be blown off
+course when it actually tries to land the lander.  Becuase the brain 
+will be deployed in the real case where there might be wind, but it 
+was not trained using any lessons where there was wind, this is an
+example of a the "Sim-to-Real" gap.
+
+As mentioned, while none of the training lessons incorporated wind,
+the model does have the ability to simulate wind.  To test this Sim-to-Real
+gap, we therefore trained the model with zero wind, but we _assess_ it with
+added wind. 
+
+There is a simulation tag called, "wind".  You can set the wind velocity
+in the SimConfig.
+Wind is a horizontal wind that 
+you can adjust.  Positive blows to the right, and negative blows 
 to the left.  As the comment says, the force on the lander from the wind changes
-as the square of the speed.
+as the square of the speed.  The wind velocity is limited to -10 to +10 m/s.
 
 You can add the "wind" as a variable in the SimConfig.  That way, you can set it
 in a lesson.  The "wind" variable is not calculated by the SIM--it is just a value that
 you set.  So there is no need to change its mode.
 
 ### Exercise #2:
-* Add the "Wind" to the SimConfig, and set its value in a lesson.  Start with a value
+* Add the "Wind" to the SimConfig, and run an assessment.  Start with a value
 of 2.0.  Can the brain that was trained without knowing about wind still land the lander
-if the wind now tries to blow the lander off course?
+if the wind now tries to blow the lander off course?  Start with a value for the 
+wind velocity between 1 and 3 m/s.  
 * How much wind can the lander deal with?
 
 If you wanted to teach the brain about wind, then you would have to add it to your SimState
-so the brain knows how much wind there is.  You wil also need to add it to your SimConfig
+so the brain knows how much wind there is.  You will also need to add it to your SimConfig
 so you can set the wind in the scenario inside a lesson object.  
 
 ### Exercise #3:
-* Teach a revised brain to land the lander under various wind conditions.
+* Add the Wind to your SimState and SimConfig, set the value in a lesson, and teach a revised brain 
+to land the lander under various wind conditions.  Then use the same assessment you 
+set up in Exercise #2 to test how well this brain works.
 
