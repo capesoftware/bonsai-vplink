@@ -51,7 +51,7 @@ change the \_scenarios member to the string, "EnableFuel.sce".
 reward function or Goals to try to 
 minimize the fuel that the lander uses.
 
-## Using the wind as an example in the Sim-to-Real gap
+## Using the wind as an example of the Sim-to-Real gap
 
 The idea that wind can blow the lunar lander either left or right 
 is an example of a "Sim-to-Real" gap.  That is, the brain was trained
