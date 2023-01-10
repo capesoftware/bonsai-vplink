@@ -59,11 +59,11 @@ using a SimState that did not know anything about the wind.  And,
 in fact, the "wind" in the SIM that the brain trained on was set
 to zero.
 
-However, it the real world, there might be wind.  And in that case
+However, in the real world, there might be wind.  And in that case
 the brain will have to deal with the fact that it might be blown off
-course when it actually tries to land the lander.  Becuase the brain 
+course when it actually tries to land the lander.  In this situation, the brain 
 will be deployed in the real case where there might be wind, but it 
-was not trained using any lessons where there was wind, this is an
+was not trained using any lessons where there was wind--this is an
 example of a the "Sim-to-Real" gap.
 
 As mentioned, while none of the training lessons incorporated wind,
@@ -72,7 +72,9 @@ gap, we therefore trained the model with zero wind, but we _assess_ it with
 added wind. 
 
 There is a simulation tag called, "wind".  You can set the wind velocity
-in the SimConfig.
+in the SimConfig _without_ adding it to the SimState.  This is the mechanism to
+investigate the effects of a Sim-to-Real gap.
+
 Wind is a horizontal wind that 
 you can adjust.  Positive blows to the right, and negative blows 
 to the left.  As the comment says, the force on the lander from the wind changes
